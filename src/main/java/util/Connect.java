@@ -20,7 +20,7 @@ public class Connect {
     private static String password;
 
     static {
-        File configFile = new File("D:\\java_groupWork\\src\\main\\java\\util\\util.properties");
+        File configFile = new File("D:\\java_groupWork\\src\\main\\java\\util\\utilConnect.properties");
         Properties config = new Properties();
         try {
             config.load(new FileInputStream(configFile));
