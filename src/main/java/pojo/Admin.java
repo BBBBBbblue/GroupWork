@@ -8,7 +8,8 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-/**
+
+/** 管理员实体对应管理员表
  * @author blue
  * @date 2023/1/12 14:54
  **/

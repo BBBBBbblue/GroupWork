@@ -9,7 +9,7 @@ import java.text.DecimalFormat;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-/**
+/** 用户实体对应顾客表
  * @author blue
  * @date 2023/1/12 14:32
  **/

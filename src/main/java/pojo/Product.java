@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-/**
+/** 商品实体对应商品表
  * @author blue
  * @date 2023/1/12 15:05
  **/
