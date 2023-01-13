@@ -18,7 +18,7 @@ public class User {
     private String account;
     private String password;
     private String nickname;
-    private String telephone;
+    private long telephone;
     private String email;
     private float balance;
     private String securityQuestion;
