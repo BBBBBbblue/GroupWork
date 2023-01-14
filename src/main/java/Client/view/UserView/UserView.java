@@ -1,7 +1,7 @@
 package Client.view.UserView;
 
-import Server.service.UserService;
-import Server.service.impl.UserServiceImpl;
+import Server.Service.UserService;
+import Server.Service.impl.UserServiceImpl;
 
 import java.util.Scanner;
 

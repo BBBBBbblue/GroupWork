@@ -1,4 +1,4 @@
-package Client.view.controll;
+package Client.controll;
 
 /**
  * @author blue

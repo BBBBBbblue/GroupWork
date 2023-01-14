@@ -1,4 +1,4 @@
-package Server.service.pojo;
+package Server.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

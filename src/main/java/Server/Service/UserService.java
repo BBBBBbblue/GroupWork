@@ -1,4 +1,4 @@
-package Server.service;
+package Server.Service;
 
 /**
  * @author blue

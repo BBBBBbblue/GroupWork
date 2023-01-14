@@ -1,6 +1,6 @@
-package Server.service.DAO;
+package Server.DAO;
 
-import Server.service.pojo.User;
+import Server.pojo.User;
 
 /**
  * @author blue

@@ -1,10 +1,10 @@
-package Server.service.DAO.impl;
+package Server.DAO.impl;
 
-import Server.service.DAO.UserDAO;
+import Server.DAO.UserDAO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import Server.service.pojo.User;
-import Server.service.util.Connect;
+import Server.pojo.User;
+import Server.util.Connect;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -1,5 +1,7 @@
 package Client.view.MainView;
 
+import Client.controll.MainController;
+
 import java.util.Scanner;
 
 /**

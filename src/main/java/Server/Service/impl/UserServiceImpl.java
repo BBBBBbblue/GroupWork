@@ -1,6 +1,6 @@
-package Server.service.impl;
+package Server.Service.impl;
 
-import Server.service.UserService;
+import Server.Service.UserService;
 
 /**
  * @author blue
