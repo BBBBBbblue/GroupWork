@@ -1,4 +1,4 @@
-package util;
+package Server.service.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,7 +20,7 @@ public class Connect {
     private static String password;
 
     static {
-        File configFile = new File("D:\\java_groupWork\\src\\main\\java\\util\\utilConnect.properties");
+        File configFile = new File("D:\\java_groupWork\\src\\main\\java\\Server.service.util\\utilConnect.properties");
         Properties config = new Properties();
         try {
             config.load(new FileInputStream(configFile));

@@ -1,6 +1,4 @@
-package view.MainView;
-
-import controll.MainController;
+package Client.view.MainView;
 
 import java.util.Scanner;
 

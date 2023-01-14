@@ -1,11 +1,11 @@
-package pojo;
+package Server.service.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.text.DecimalFormat;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

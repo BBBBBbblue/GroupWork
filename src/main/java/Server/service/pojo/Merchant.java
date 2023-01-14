@@ -1,24 +1,26 @@
-package pojo;
+package Server.service.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
-
-/** 管理员实体对应管理员表
+@AllArgsConstructor
+/** 商户实体对应商户表
  * @author blue
- * @date 2023/1/12 14:54
+ * @date 2023/1/12 15:02
  **/
-public class Admin {
+public class Merchant {
     private int id;
-    private String password;
+    private String merchantName;
     private String account;
+    private String password;
+    private String telephone;
+    private String email;
+    private float charge;
     private boolean status;
-    private int purview;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
 }
