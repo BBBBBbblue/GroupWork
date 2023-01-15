@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.Scanner;
 
 /**
  * @author blue
@@ -27,6 +28,16 @@ public class ClientTry {
             channel.register(selector, SelectionKey.OP_READ);
         } catch (IOException e) {
             System.out.println("初始化失败");
+        }
+    }
+
+    public void sendMsg(String msg){
+
+        try {
+            ByteBuffer buffer = ByteBuffer.wrap(msg.getBytes());
+            channel.write(buffer);
+        } catch (IOException e) {
+            System.out.println("服务器异常");
         }
     }
 
@@ -52,14 +63,18 @@ public class ClientTry {
         Thread t = new Thread(){
             @Override
             public void run() {
-                clientTry.readMsg(buffer);
-                buffer.clear();
+                while (true){
+                    clientTry.readMsg(buffer);
+                    buffer.clear();
+                }
             }
         };
         t.start();
-        while (true){
-
+        Scanner scanner = new Scanner(System.in);
+        while (scanner.hasNext()){
+            clientTry.sendMsg(scanner.nextLine());
         }
+
 
 
     }
