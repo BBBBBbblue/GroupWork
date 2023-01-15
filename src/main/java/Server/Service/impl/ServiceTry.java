@@ -1,6 +1,7 @@
 package Server.Service.impl;
 
 import Server.DAO.impl.ServerDAOImpl;
+import Server.util.ReplyThread;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -72,34 +73,14 @@ public class ServiceTry {
             switch (userMsg){
                 case "智能客服":
                     response("智能客服坤坤，为您服务",channel);
-                while (true) {
-
-                    len = channel.read(buffer);
-                    if (len == -1) {
-                        throw new IOException();
-                    }
-                    if (buffer.position() == 0) {
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        if (userMsg.equals(1)) {
-                            break;
-                        }
-                        userMsg = new String(buffer.array(), 0, len);
-                        String ans = serverDAO.response(userMsg);
-                        response(ans, channel);
-                        buffer.clear();
-                    }
-                }
+                    ReplyThread thread = new ReplyThread(userMsg,channel,buffer,serverDAO,this);
+                    thread.start();
                 break;
                 default:break;
             }
         }catch (IOException e){
             System.out.println("用户断开连接，本次服务取消");
-            key.channel();
+            key.cancel();
             try {
                 channel.socket().close();
                 channel.close();
