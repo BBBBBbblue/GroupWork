@@ -24,7 +24,6 @@ public class UserDAOImpl implements UserDAO {
     private static Scanner scanner = new Scanner(System.in);
     private User loginUser;
     private static List<Long> telList = new ArrayList<>();
-
     public UserDAOImpl(User user) {
         loginUser = user;
     }
@@ -45,11 +44,8 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public User login() {
-        System.out.println("请输入用户名");
-        String account = scanner.nextLine();
-        System.out.println("请输入密码");
-        String pwd = scanner.nextLine();
+    public User login(String account,String pwd) {
+
         String sql = "select * from Custom where account = ?";
         try (Connection connection = Connect.getConnection();
              PreparedStatement ps = connection.prepareStatement(sql);

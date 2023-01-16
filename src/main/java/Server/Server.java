@@ -1,8 +1,11 @@
-package Server.Service.impl;
+package Server;
 
+import Server.DAO.UserDAO;
 import Server.DAO.impl.ServerDAOImpl;
+import Server.DAO.impl.UserDAOImpl;
+import Server.pojo.User;
+import Server.util.LoginThread;
 import Server.util.ReplyThread;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +17,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 @Data
@@ -23,13 +27,15 @@ import java.util.Iterator;
  * @author blue
  * @date 2023/1/14 20:46
  **/
-public class ServiceTry {
+public class Server {
     private final ServerDAOImpl serverDAO = new ServerDAOImpl();
+    private final UserDAOImpl userDAO = new UserDAOImpl();
     private final String IP = "localhost";
     private final int PORT = 8888;
     private ServerSocketChannel serverSocketChannel;
     private Selector selector;
-    public ServiceTry init(){
+    private static ArrayList<User> list = new ArrayList<>();
+    public Server init(){
         try {
             serverSocketChannel = ServerSocketChannel.open();
             selector = Selector.open();
@@ -75,6 +81,10 @@ public class ServiceTry {
                     response("智能客服坤坤，为您服务",channel);
                     ReplyThread thread = new ReplyThread(userMsg,channel,buffer,serverDAO,this);
                     thread.start();
+                break;
+                case "用户登录":
+                    LoginThread loginThread = new LoginThread(userMsg,channel,buffer,userDAO,this);
+                    loginThread.start();
                 break;
                 default:break;
             }
@@ -123,7 +133,7 @@ public class ServiceTry {
     }
 
     public static void main(String[] args) {
-        ServiceTry s = new ServiceTry();
+        Server s = new Server();
         s.init().start();
     }
 }

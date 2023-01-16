@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Data
@@ -13,7 +14,7 @@ import java.sql.Timestamp;
  * @author blue
  * @date 2023/1/12 14:32
  **/
-public class User {
+public class User implements Serializable {
     private int id;
     private String account;
     private String password;

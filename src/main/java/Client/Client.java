@@ -1,4 +1,6 @@
-package Server.Service.impl;
+package Client;
+
+import Client.util.UserReadThread;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -12,11 +14,12 @@ import java.util.Scanner;
  * @author blue
  * @date 2023/1/14 21:12
  **/
-public class ClientTry {
+public class Client {
     private final static String IP = "127.0.0.1";
     private final static int PORT = 8888;
     private Selector selector;
     private SocketChannel channel;
+    private static Scanner scanner = new Scanner(System.in);
 
     public void init(){
         try {
@@ -57,22 +60,16 @@ public class ClientTry {
     }
 
     public static void main(String[] args) {
-        final ClientTry clientTry = new ClientTry();
-        clientTry.init();
-        final ByteBuffer buffer = ByteBuffer.allocate(1024);
-        Thread t = new Thread(){
-            @Override
-            public void run() {
-                while (true){
-                    clientTry.readMsg(buffer);
-                    buffer.clear();
-                }
-            }
-        };
-        t.start();
-        Scanner scanner = new Scanner(System.in);
+        Client client = new Client();
+        client.init();
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        UserReadThread userReadThread = new UserReadThread(buffer, client);
+        userReadThread.start();
+
         while (scanner.hasNext()){
-            clientTry.sendMsg(scanner.nextLine());
+            client.sendMsg(scanner.nextLine());
+            // TODO: 2023/1/16 字符串用~拼接 优化客户端视图
+
         }
 
 

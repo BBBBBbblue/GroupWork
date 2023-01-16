@@ -1,7 +1,7 @@
 package Server.util;
 
 import Server.DAO.impl.ServerDAOImpl;
-import Server.Service.impl.ServiceTry;
+import Server.Server;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -20,14 +20,14 @@ public class ReplyThread extends Thread{
     private SocketChannel channel;
     private ByteBuffer buffer;
     private ServerDAOImpl serverDAO;
-    private ServiceTry serviceTry;
+    private Server server;
 
-    public ReplyThread(String userMsg,SocketChannel channel,ByteBuffer buffer,ServerDAOImpl serverDAO,ServiceTry serviceTry){
+    public ReplyThread(String userMsg, SocketChannel channel, ByteBuffer buffer, ServerDAOImpl serverDAO, Server server){
         this.userMsg = userMsg;
         this.channel = channel;
         this.buffer = buffer;
         this.serverDAO = serverDAO;
-        this.serviceTry = serviceTry;
+        this.server = server;
     }
 
     @Override
@@ -42,11 +42,11 @@ public class ReplyThread extends Thread{
                         userMsg = new String(buffer.array(), 0, len);
                         if (userMsg.equals("1")) {
                             buffer.clear();
-                            serviceTry.response("坤坤期待下次为您服务",channel);
+                            server.response("坤坤期待下次为您服务",channel);
                             break;
                         }
                         String ans = serverDAO.response(userMsg);
-                        serviceTry.response(ans, channel);
+                        server.response(ans, channel);
                         buffer.clear();
 
                     }
