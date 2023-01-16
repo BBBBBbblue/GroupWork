@@ -27,4 +27,6 @@ public class User implements Serializable {
     private boolean status;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
+    private static final long serialVersionUID = 1L;
+
 }

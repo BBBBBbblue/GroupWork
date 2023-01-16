@@ -1,9 +1,11 @@
 package Client;
 
 import Client.util.UserReadThread;
+import Server.pojo.User;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
@@ -51,11 +53,20 @@ public class Client {
                 if (len != -1){
                     buffer.flip();
                     System.out.println(new String(buffer.array(),0,len));
+                    ByteArrayInputStream bis = new ByteArrayInputStream(buffer.array());
+                    ObjectInputStream ois = new ObjectInputStream(bis);
+                    User user =(User) ois.readObject();
+                    System.out.println(user.getAccount());
+                    // TODO: 2023/1/17 进一步优化
                 }
-                selector.selectedKeys().clear();
             }
         } catch (IOException e) {
-            System.out.println("用户读数据出错");
+            e.printStackTrace();
+        }catch (ClassNotFoundException e){
+            System.out.println("类不存在");
+        } finally {
+            buffer.clear();
+            selector.selectedKeys().clear();
         }
     }
 
@@ -66,11 +77,12 @@ public class Client {
         UserReadThread userReadThread = new UserReadThread(buffer, client);
         userReadThread.start();
 
-        while (scanner.hasNext()){
+        while (scanner.hasNext()) {
             client.sendMsg(scanner.nextLine());
             // TODO: 2023/1/16 字符串用~拼接 优化客户端视图
-
         }
+
+
 
 
 

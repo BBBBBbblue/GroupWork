@@ -6,7 +6,9 @@ import Server.DAO.impl.UserDAOImpl;
 import Server.Server;
 import Server.pojo.User;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
@@ -47,8 +49,10 @@ public class LoginThread extends Thread {
                     account = userMsg.substring(0,index);
                     password = userMsg.substring(index+1);
                     User user = userDAO.login(account,password);
-                    server.response("当前登录用户名为"+user.getAccount(),channel);
-                    server.response("当前登录余额为"+user.getBalance(),channel);
+                    ByteArrayOutputStream bo = new ByteArrayOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(bo);
+                    oos.writeObject(user);
+                    channel.write(ByteBuffer.wrap(bo.toByteArray()));
                     return;
                 }
             }
