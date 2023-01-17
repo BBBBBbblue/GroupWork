@@ -5,6 +5,7 @@ import Server.DAO.impl.ServerDAOImpl;
 import Server.DAO.impl.UserDAOImpl;
 import Server.pojo.User;
 import Server.util.LoginThread;
+import Server.util.RegisterThread;
 import Server.util.ReplyThread;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -52,7 +53,7 @@ public class Server {
         SocketChannel socketChannel = serverSocketChannel.accept();
         socketChannel.configureBlocking(false);
         socketChannel.register(selector,SelectionKey.OP_READ);
-        String msg = "欢迎来到商城，请自由挑选";
+        String msg = "欢迎来到小鸭子商城";
         response(msg,socketChannel);
 
     }
@@ -86,6 +87,9 @@ public class Server {
                     LoginThread loginThread = new LoginThread(userMsg,channel,buffer,userDAO,this);
                     loginThread.start();
                 break;
+                case "用户注册":
+                    RegisterThread registerThread = new RegisterThread(userMsg,channel,buffer,userDAO,this);
+                    registerThread.start();
                 default:break;
             }
         }catch (IOException e){

@@ -14,9 +14,13 @@ public interface UserDAO {
      */
      User login(String account,String pwd);
 
+
     /** 新用户注册方法
-     * @return 布尔值判断注册是否成功
+     * @param account 新用户账号
+     * @param password 新用户密码
+     * @param telephone 新用户手机号码
+     * @return 字符串方便服务器发送
      */
-     boolean register();
+     String register(String account,String password,String telephone);
 
 }

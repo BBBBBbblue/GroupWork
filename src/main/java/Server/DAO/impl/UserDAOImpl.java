@@ -22,21 +22,26 @@ import java.util.Scanner;
  **/
 public class UserDAOImpl implements UserDAO {
     private static Scanner scanner = new Scanner(System.in);
-    private User loginUser;
-    private static List<Long> telList = new ArrayList<>();
-    public UserDAOImpl(User user) {
-        loginUser = user;
-    }
+    private static List<String> accountList = new ArrayList<>();
+    private static List<String> telList = new ArrayList<>();
+    private String resMsg = null;
 
     static {
         String sql = "select telephone from Custom";
+        String sql1 = "select account from Custom";
         try (Connection c = Connect.getConnection();
              PreparedStatement ps = c.prepareStatement(sql);
+             PreparedStatement pss = c.prepareStatement(sql1);
         ) {
             ps.execute();
             ResultSet resultSet = ps.executeQuery();
             while (resultSet.next()) {
-                telList.add(resultSet.getLong("telephone"));
+                telList.add(resultSet.getString("telephone"));
+            }
+            pss.execute();
+            ResultSet resultSet1 = pss.executeQuery();
+            while (resultSet.next()){
+                accountList.add(resultSet.getString("account"));
             }
         } catch (SQLException e) {
             System.out.println("初始化失败");
@@ -67,7 +72,7 @@ public class UserDAOImpl implements UserDAO {
                 user.setPassword(password);
                 user.setBalance(resultSet.getFloat("balance"));
                 user.setNickname(resultSet.getString("nickname"));
-                user.setTelephone(resultSet.getLong("telephone"));
+                user.setTelephone(resultSet.getString("telephone"));
                 user.setEmail(resultSet.getString("email"));
                 user.setSecurityQuestion(resultSet.getString("security_question"));
                 user.setSecurityAnswer(resultSet.getString("security_answer"));
@@ -87,50 +92,31 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public boolean register() {
-        System.out.println("请输入不超过10位用户名");
-        String account = scanner.nextLine();
-        if (account.length() > 10) {
-            System.out.println("用户名格式错误");
-            return false;
+    public String register(String account,String password,String telephone) {
+        if (accountList.contains(account)){
+            resMsg = "用户名已存在";
+            return resMsg;
         }
-        System.out.println("请输入密码");
-        String password = scanner.nextLine();
-        String sql = "select * from Custom where account = ?";
-        String s = "insert into Custom(account,password,nickname,telephone) values (?,?,?,?)";
-        try (
-                Connection connection = Connect.getConnection();
+        else if (telList.contains(telephone)){
+            resMsg = "当前号码已经注册";
+            return resMsg;
+        }
+        String sql = "insert into Custom(account,password,telephone) values (?,?,?)";
+        try (   Connection connection = Connect.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql);
-                PreparedStatement pss = connection.prepareStatement(s);
-        ) {
-            ps.setString(1, account);
+                ) {
+            ps.setString(1,account);
+            ps.setString(2,password);
+            ps.setString(3,telephone);
             ps.execute();
-            ResultSet resultSet = ps.executeQuery();
-            if (resultSet.next()) {
-                System.out.println("用户名已存在");
-                return false;
-            } else {
-                pss.setString(1, account);
-                pss.setString(2, password);
-                System.out.println("输入你的昵称");
-                String nickname = scanner.nextLine();
-                pss.setString(3, nickname);
-                System.out.println("请输入你的电话");
-                long tel = scanner.nextLong();
-                if (telList.contains(tel)) {
-                    System.out.println("电话号码已存在");
-                    return false;
-                }
-                pss.setLong(4, tel);
-                pss.execute();
-                System.out.println("注册成功,为了账户安全，请尽快完善信息");
-                telList.add(tel);
-                return true;
-            }
-        } catch (SQLException e) {
-            System.out.println("服务器异常");
-            return false;
+            resMsg = "注册成功，请尽快完善您的资料";
+            return resMsg;
+        }catch (SQLException e){
+            resMsg = "未知错误";
+            return resMsg;
         }
-
     }
+
+
+
 }

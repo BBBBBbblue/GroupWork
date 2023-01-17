@@ -4,28 +4,24 @@ import Client.Client;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
-
 @Data
 @NoArgsConstructor
-/** 客户端接收消息线程
+/**
  * @author blue
- * @date 2023/1/16 18:12
+ * @date 2023/1/17 20:38
  **/
-public class UserReadThread extends Thread {
+public class UserReadObject extends Thread {
     private ByteBuffer buffer;
     private Client client;
-
-    public UserReadThread(ByteBuffer buffer, Client client) {
+    public UserReadObject(ByteBuffer buffer, Client client){
         this.buffer = buffer;
         this.client = client;
     }
 
     @Override
     public void run() {
-            client.readMsg(buffer);
-            buffer.clear();
-
+         client.readObject(buffer);
+         buffer.clear();
     }
 }
