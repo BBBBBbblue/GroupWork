@@ -43,6 +43,7 @@ public class Server {
             serverSocketChannel.bind(new InetSocketAddress(IP,PORT));
             serverSocketChannel.configureBlocking(false);
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
+            userDAO.init();;
         }catch (IOException e){
             System.out.println("初始化失败");
         }

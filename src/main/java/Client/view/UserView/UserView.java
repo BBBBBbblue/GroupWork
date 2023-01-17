@@ -51,8 +51,8 @@ public class UserView {
 
     public void registerView(){
         client.sendMsg("用户注册");
-        UserReadThread urd = new UserReadThread(buffer,client);
-        urd.start();
+//        UserReadThread urd = new UserReadThread(buffer,client);
+//        urd.start();
         System.out.println("请输入不超过10位用户名");
         String account = scanner.nextLine();
         while (account.length() > 10 || account.contains("~") || account.contains("@")) {
@@ -64,7 +64,7 @@ public class UserView {
         System.out.println("请输入电话号码");
         String telephone = scanner.nextLine();
         client.sendMsg(account+"~"+password+"@"+telephone);
-
+        client.readMsg(buffer);
         new MainView(client,buffer).mainView();
     }
 

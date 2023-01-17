@@ -26,7 +26,7 @@ public class UserDAOImpl implements UserDAO {
     private static List<String> telList = new ArrayList<>();
     private String resMsg = null;
 
-    static {
+    public void init() {
         String sql = "select telephone from Custom";
         String sql1 = "select account from Custom";
         try (Connection c = Connect.getConnection();
@@ -38,7 +38,7 @@ public class UserDAOImpl implements UserDAO {
             while (resultSet.next()) {
                 telList.add(resultSet.getString("telephone"));
             }
-            pss.execute();
+            ps.close();
             ResultSet resultSet1 = pss.executeQuery();
             while (resultSet.next()){
                 accountList.add(resultSet.getString("account"));
@@ -97,7 +97,7 @@ public class UserDAOImpl implements UserDAO {
             resMsg = "用户名已存在";
             return resMsg;
         }
-        else if (telList.contains(telephone)){
+        if (telList.contains(telephone)){
             resMsg = "当前号码已经注册";
             return resMsg;
         }
