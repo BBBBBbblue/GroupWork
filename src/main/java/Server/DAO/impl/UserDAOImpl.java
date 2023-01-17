@@ -27,25 +27,22 @@ public class UserDAOImpl implements UserDAO {
     private String resMsg = null;
 
     public void init() {
-        String sql = "select telephone from Custom";
-        String sql1 = "select account from Custom";
+        String sql = "select * from Custom";
         try (Connection c = Connect.getConnection();
              PreparedStatement ps = c.prepareStatement(sql);
-             PreparedStatement pss = c.prepareStatement(sql1);
         ) {
             ps.execute();
             ResultSet resultSet = ps.executeQuery();
             while (resultSet.next()) {
                 telList.add(resultSet.getString("telephone"));
-            }
-            ps.close();
-            ResultSet resultSet1 = pss.executeQuery();
-            while (resultSet.next()){
                 accountList.add(resultSet.getString("account"));
             }
         } catch (SQLException e) {
             System.out.println("初始化失败");
         }
+        System.out.println(telList.toString());
+        System.out.println(accountList.toString());
+
     }
 
     @Override
@@ -97,7 +94,7 @@ public class UserDAOImpl implements UserDAO {
             resMsg = "用户名已存在";
             return resMsg;
         }
-        if (telList.contains(telephone)){
+        else if (telList.contains(telephone)){
             resMsg = "当前号码已经注册";
             return resMsg;
         }
