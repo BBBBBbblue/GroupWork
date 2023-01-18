@@ -4,9 +4,7 @@ import Server.DAO.UserDAO;
 import Server.DAO.impl.ServerDAOImpl;
 import Server.DAO.impl.UserDAOImpl;
 import Server.pojo.User;
-import Server.util.LoginThread;
-import Server.util.RegisterThread;
-import Server.util.ReplyThread;
+import Server.util.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -86,11 +84,20 @@ public class Server {
                 break;
                 case "用户登录":
                     LoginThread loginThread = new LoginThread(userMsg,channel,buffer,userDAO,this);
-                    loginThread.start();
+                    loginThread.run();
                 break;
                 case "用户注册":
                     RegisterThread registerThread = new RegisterThread(userMsg,channel,buffer,userDAO,this);
-                    registerThread.start();
+                    registerThread.run();
+                    break;
+                case "修改资料":
+                    UpdateThread updateThread = new UpdateThread(userMsg,channel,buffer,userDAO,this);
+                    updateThread.run();
+                    break;
+                case"充值":
+                    ChargeThread chargeThread = new ChargeThread(userMsg,channel,buffer,userDAO,this);
+                    chargeThread.run();
+                    break;
                 default:break;
             }
         }catch (IOException e){

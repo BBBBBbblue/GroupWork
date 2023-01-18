@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
 import java.util.Scanner;
 @Data
 @NoArgsConstructor
-/**
+/** 用户操作界面
  * @author blue
  * @date 2023/1/12 14:30
  **/
@@ -66,6 +66,37 @@ public class UserView {
         client.sendMsg(account+"~"+password+"@"+telephone);
         client.readMsg(buffer);
         new MainView(client,buffer).mainView();
+    }
+
+    public void updateView(){
+        client.sendMsg("修改资料");
+        System.out.println("当前用户状态");
+        System.out.println("==============================");
+        System.out.println("登录用户为:"+client.getUser().getAccount());
+        System.out.println("当前昵称:"+client.getUser().getNickname());
+        System.out.println("当前余额:"+client.getUser().getBalance());
+        System.out.println("当前电话为:"+client.getUser().getTelephone());
+        System.out.println("注册邮箱号码为:"+client.getUser().getEmail());
+        System.out.println("密码保护问题:"+client.getUser().getSecurityQuestion());
+        System.out.println("密码保护答案:"+client.getUser().getSecurityAnswer());
+        System.out.println("==============================");
+        System.out.println("请输入修改后昵称");
+        String nickname = scanner.nextLine();
+        System.out.println("请输入修改后邮箱");
+        String email = scanner.nextLine();
+        client.sendMsg(nickname+"~"+email+"!"+client.getUser().getAccount());
+        client.readMsg(buffer);
+        new FunctionView(client,buffer).functionView();
+    }
+
+    public void chargeView(){
+        client.sendMsg("充值");
+        System.out.println("请输入你的充值金额！！！！");
+        int money = scanner.nextInt();
+        client.sendMsg(client.getUser().getAccount()+"~"+money+".00");
+        client.readMsg(buffer);
+        System.out.println("当前用户余额："+(client.getUser().getBalance()+money));
+        new FunctionView(client,buffer).functionView();
     }
 
 }

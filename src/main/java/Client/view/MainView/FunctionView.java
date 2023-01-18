@@ -24,7 +24,7 @@ public class FunctionView {
 
     public void functionView(){
         System.out.println("==========================================");
-        System.out.println("1,智能客服 2,商城主页 3，修改用户资料");
+        System.out.println("1,智能客服 2,商城主页 3，修改用户资料 4,充值");
         new FunctionController(client,buffer).functionChoose(scanner.nextInt());
     }
 }

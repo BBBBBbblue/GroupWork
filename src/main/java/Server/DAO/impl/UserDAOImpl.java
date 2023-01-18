@@ -6,11 +6,15 @@ import lombok.NoArgsConstructor;
 import Server.pojo.User;
 import Server.util.Connect;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,9 +26,12 @@ import java.util.Scanner;
  **/
 public class UserDAOImpl implements UserDAO {
     private static Scanner scanner = new Scanner(System.in);
-    private static List<String> accountList = new ArrayList<>();
-    private static List<String> telList = new ArrayList<>();
+    private List<String> accountList = new ArrayList<>();
+    private List<String> telList = new ArrayList<>();
     private String resMsg = null;
+    private HashMap<String,Float> userMap = new HashMap<>();
+    private SocketChannel channel;
+
 
     public void init() {
         String sql = "select * from Custom";
@@ -75,6 +82,8 @@ public class UserDAOImpl implements UserDAO {
                 user.setSecurityAnswer(resultSet.getString("security_answer"));
                 user.setGmtCreate(resultSet.getTimestamp("gmt_create"));
                 user.setGmtModified(resultSet.getTimestamp("gmt_modified"));
+                userMap.put(account,user.getBalance());
+                System.out.println(userMap.entrySet());
                 return user;
             } else {
                 System.out.println("用户名或密码错误,请重试");
@@ -107,6 +116,8 @@ public class UserDAOImpl implements UserDAO {
             ps.setString(3,telephone);
             ps.execute();
             resMsg = "注册成功，请尽快完善您的资料";
+            telList.add(telephone);
+            accountList.add(account);
             return resMsg;
         }catch (SQLException e){
             resMsg = "未知错误";
@@ -114,6 +125,45 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 
+    @Override
+    public String update(String nickname, String email,String account) {
+        String msg = null;
+        String sql = "update Custom set nickname = ?,email = ? where account = ?";
+        try(    Connection connection = Connect.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ){
+            ps.setString(1,nickname);
+            ps.setString(2,email);
+            ps.setString(3,account);
+            ps.execute();
+            msg = "修改成功";
+            return msg;
+        }catch (SQLException e){
+            msg = "修改失败";
+            return msg;
+        }
+    }
 
-
+    @Override
+    public String charge(String account,String money) {
+        String resMsg = "未知错误";
+        String sql = "update Custom set balance = ? where account = ?";
+        float balance = userMap.get(account);
+        float addMoney = Float.parseFloat(money);
+        System.out.println(addMoney);
+        balance = balance + addMoney;
+        try(    Connection connection = Connect.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ){
+            ps.setFloat(1,balance);
+            ps.setString(2,account);
+            ps.execute();
+            resMsg = "充值完成";
+            userMap.put(account,balance);
+            System.out.println(userMap.entrySet());
+            return resMsg;
+        }catch (SQLException e){
+            return resMsg;
+        }
+    }
 }

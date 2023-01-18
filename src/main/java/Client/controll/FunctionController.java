@@ -43,6 +43,10 @@ public class FunctionController {
 
                 break;
             case 3:
+                new UserView(client,buffer).updateView();
+                break;
+            case 4:
+                new UserView(client,buffer).chargeView();
                 break;
         }
     }
