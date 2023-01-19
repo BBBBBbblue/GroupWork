@@ -1,17 +1,20 @@
-package Server.util;
+package Server.util.serverThread;
 
 import Server.DAO.impl.UserDAOImpl;
 import Server.Server;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-
+@Data
+@NoArgsConstructor
 /**
  * @author blue
- * @date 2023/1/17 23:14
+ * @date 2023/1/18 20:19
  **/
-public class RegisterThread extends Thread {
+public class UpdateThread extends Thread {
     private String userMsg;
     private SocketChannel channel;
     private ByteBuffer buffer;
@@ -19,10 +22,10 @@ public class RegisterThread extends Thread {
     private Server server;
     private int index;
     private String account;
-    private String password;
-    private String telephone;
+    private String nickname;
+    private String email;
 
-    public RegisterThread(String userMsg, SocketChannel channel, ByteBuffer buffer, UserDAOImpl userDAO, Server server) {
+    public UpdateThread(String userMsg, SocketChannel channel, ByteBuffer buffer, UserDAOImpl userDAO, Server server) {
         this.userMsg = userMsg;
         this.channel = channel;
         this.buffer = buffer;
@@ -42,19 +45,16 @@ public class RegisterThread extends Thread {
                     userMsg = new String(buffer.array(),0,len);
                     buffer.clear();
                     index = userMsg.indexOf('~');
-                    account = userMsg.substring(0,index);
-                    userMsg = userMsg.substring(index+1);
-                    index = userMsg.indexOf('@');
-                    password = userMsg.substring(0,index);
-                    telephone = userMsg.substring(index+1);
-                    String resMsg = userDAO.register(account,password,telephone);
+                    nickname = userMsg.substring(0,index);
+                    email = userMsg.substring(index+1,userMsg.indexOf('!'));
+                    account = userMsg.substring(userMsg.indexOf('!')+1);
+                    String resMsg = userDAO.update(nickname,email,account);
                     channel.write(ByteBuffer.wrap(resMsg.getBytes()));
-
                     return;
                 }
             }
         }catch (IOException e){
-            System.out.println("注册出错");
+            System.out.println("更新出错");
         }
     }
 }

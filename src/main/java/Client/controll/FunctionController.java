@@ -40,7 +40,7 @@ public class FunctionController {
                 new FunctionView(client,buffer).functionView();
                 break;
             case 2:
-
+                new UserView(client,buffer).productView();
                 break;
             case 3:
                 new UserView(client,buffer).updateView();

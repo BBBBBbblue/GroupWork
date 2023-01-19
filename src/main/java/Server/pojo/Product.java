@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
@@ -12,7 +13,7 @@ import java.sql.Timestamp;
  * @author blue
  * @date 2023/1/12 15:05
  **/
-public class Product {
+public class Product implements Serializable {
     private int id;
     private String productName;
     private float price;
@@ -23,4 +24,5 @@ public class Product {
     private int status;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
+    private static final long serialVersionUID = 2L;
 }

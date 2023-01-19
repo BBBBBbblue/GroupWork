@@ -1,10 +1,9 @@
 package Server;
 
-import Server.DAO.UserDAO;
 import Server.DAO.impl.ServerDAOImpl;
 import Server.DAO.impl.UserDAOImpl;
 import Server.pojo.User;
-import Server.util.*;
+import Server.util.serverThread.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -70,6 +69,7 @@ public class Server {
         ByteBuffer buffer = ByteBuffer.allocate(1024);
         String str = null;
         try{
+            str = channel.getLocalAddress().toString();
             int len = channel.read(buffer);
             if (len == -1){
                 throw new IOException();
@@ -84,24 +84,32 @@ public class Server {
                 break;
                 case "用户登录":
                     LoginThread loginThread = new LoginThread(userMsg,channel,buffer,userDAO,this);
-                    loginThread.run();
+                    loginThread.start();
                 break;
                 case "用户注册":
                     RegisterThread registerThread = new RegisterThread(userMsg,channel,buffer,userDAO,this);
-                    registerThread.run();
+                    registerThread.start();
                     break;
                 case "修改资料":
                     UpdateThread updateThread = new UpdateThread(userMsg,channel,buffer,userDAO,this);
-                    updateThread.run();
+                    updateThread.start();
                     break;
                 case"充值":
                     ChargeThread chargeThread = new ChargeThread(userMsg,channel,buffer,userDAO,this);
-                    chargeThread.run();
+                    chargeThread.start();
+                    break;
+                case"结账":
+                    PayThread payThread = new PayThread(userMsg,channel,buffer,userDAO,this);
+                    payThread.start();
+                    break;
+                case"查看商品":
+                    SendProductThread sendProductThread = new SendProductThread(userMsg,channel,buffer,userDAO,this);
+                    sendProductThread.start();
                     break;
                 default:break;
             }
         }catch (IOException e){
-            System.out.println("用户断开连接，本次服务取消");
+            System.out.println(str+":断开连接，本次服务取消");
             key.cancel();
             try {
                 channel.socket().close();

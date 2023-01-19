@@ -38,4 +38,11 @@ public interface UserDAO {
      */
      String charge(String account,String money);
 
+    /** 用户消费方法
+     * @param account 用户账户
+     * @param money 消费金额
+     * @return 字符串信息，方便返回
+     */
+     String pay(String account,float money);
+
 }

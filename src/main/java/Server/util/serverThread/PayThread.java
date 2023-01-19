@@ -1,22 +1,17 @@
-package Server.util;
+package Server.util.serverThread;
 
-import Server.DAO.UserDAO;
-import Server.DAO.impl.ServerDAOImpl;
 import Server.DAO.impl.UserDAOImpl;
 import Server.Server;
-import Server.pojo.User;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
 /**
  * @author blue
- * @date 2023/1/16 18:44
+ * @date 2023/1/19 20:26
  **/
-public class LoginThread extends Thread {
+public class PayThread extends Thread {
     private String userMsg;
     private SocketChannel channel;
     private ByteBuffer buffer;
@@ -24,9 +19,9 @@ public class LoginThread extends Thread {
     private Server server;
     private int index;
     private String account;
-    private String password;
+    private String money;
 
-    public LoginThread(String userMsg, SocketChannel channel, ByteBuffer buffer, UserDAOImpl userDAO, Server server) {
+    public PayThread(String userMsg, SocketChannel channel, ByteBuffer buffer, UserDAOImpl userDAO, Server server) {
         this.userMsg = userMsg;
         this.channel = channel;
         this.buffer = buffer;
@@ -36,8 +31,8 @@ public class LoginThread extends Thread {
 
     @Override
     public void run() {
-        try {
-            while (true) {
+        try{
+            while (true){
                 int len = channel.read(buffer);
                 if (len == -1){
                     throw new IOException();
@@ -47,23 +42,16 @@ public class LoginThread extends Thread {
                     buffer.clear();
                     index = userMsg.indexOf('~');
                     account = userMsg.substring(0,index);
-                    password = userMsg.substring(index+1);
-                    User user = userDAO.login(account,password);
-                    ByteArrayOutputStream bo = new ByteArrayOutputStream();
-                    ObjectOutputStream oos = new ObjectOutputStream(bo);
-                    oos.writeObject(user);
-                    channel.write(ByteBuffer.wrap(bo.toByteArray()));
+                    money = userMsg.substring(index+1);
+                    float price = Float.parseFloat(money);
+                    String resMsg = userDAO.pay(account,price);
+                    channel.write(ByteBuffer.wrap(resMsg.getBytes()));
                     return;
                 }
             }
 
-        } catch (NullPointerException e) {
-            server.response("用户名密码错误，或账号已经注销，请重试",channel);
-            run();
         }catch (IOException e){
-            System.out.println("用户已经断开");
+            System.out.println("充值服务器出错");
         }
-
-
     }
 }

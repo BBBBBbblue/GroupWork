@@ -20,7 +20,7 @@ public class UserReadReply extends Thread{
     @Override
     public void run() {
         while (true) {
-            client.readMsg(buffer);
+            System.out.println( client.readMsg(buffer));
             buffer.clear();
         }
     }

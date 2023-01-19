@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import java.nio.ByteBuffer;
 import java.util.Scanner;
+
 @Data
 @NoArgsConstructor
 /** 用户操作界面
@@ -24,32 +25,33 @@ public class UserView {
     private static UserService userService = new UserServiceImpl();
     private Client client;
     private ByteBuffer buffer;
-    public UserView(Client client,ByteBuffer buffer){
+
+    public UserView(Client client, ByteBuffer buffer) {
         this.client = client;
         this.buffer = buffer;
     }
-    public void loginView(){
+
+    public void loginView() {
         client.sendMsg("用户登录");
         System.out.println("请输入你的用户名");
         String account = scanner.nextLine();
         System.out.println("请输入你的密码");
         String password = scanner.nextLine();
-        client.sendMsg(account+"~"+password);
+        client.sendMsg(account + "~" + password);
         client.readObject(buffer);
-        if (client.getUser()!= null){
+        if (client.getUser() != null) {
             System.out.println("登录成功");
-            System.out.println("当前登录用户为:"+client.getUser().getAccount());
-            System.out.println("当前昵称:"+client.getUser().getNickname());
-            System.out.println("当前用户账户余额为:"+client.getUser().getBalance());
-            new FunctionView(client,buffer).functionView();
-        }
-        else {
+            System.out.println("当前登录用户为:" + client.getUser().getAccount());
+            System.out.println("当前昵称:" + client.getUser().getNickname());
+            System.out.println("当前用户账户余额为:" + client.getUser().getBalance());
+            new FunctionView(client, buffer).functionView();
+        } else {
             System.out.println("用户名或密码错误，登录失败");
-            new MainView(client,buffer).mainView();
+            new MainView(client, buffer).mainView();
         }
     }
 
-    public void registerView(){
+    public void registerView() {
         client.sendMsg("用户注册");
 //        UserReadThread urd = new UserReadThread(buffer,client);
 //        urd.start();
@@ -63,40 +65,55 @@ public class UserView {
         String password = scanner.nextLine();
         System.out.println("请输入电话号码");
         String telephone = scanner.nextLine();
-        client.sendMsg(account+"~"+password+"@"+telephone);
-        client.readMsg(buffer);
-        new MainView(client,buffer).mainView();
+        client.sendMsg(account + "~" + password + "@" + telephone);
+        System.out.println(client.readMsg(buffer));
+        new MainView(client, buffer).mainView();
     }
 
-    public void updateView(){
+    public void updateView() {
         client.sendMsg("修改资料");
         System.out.println("当前用户状态");
         System.out.println("==============================");
-        System.out.println("登录用户为:"+client.getUser().getAccount());
-        System.out.println("当前昵称:"+client.getUser().getNickname());
-        System.out.println("当前余额:"+client.getUser().getBalance());
-        System.out.println("当前电话为:"+client.getUser().getTelephone());
-        System.out.println("注册邮箱号码为:"+client.getUser().getEmail());
-        System.out.println("密码保护问题:"+client.getUser().getSecurityQuestion());
-        System.out.println("密码保护答案:"+client.getUser().getSecurityAnswer());
+        System.out.println("登录用户为:" + client.getUser().getAccount());
+        System.out.println("当前昵称:" + client.getUser().getNickname());
+        System.out.println("当前余额:" + client.getUser().getBalance());
+        System.out.println("当前电话为:" + client.getUser().getTelephone());
+        System.out.println("注册邮箱号码为:" + client.getUser().getEmail());
+        System.out.println("密码保护问题:" + client.getUser().getSecurityQuestion());
+        System.out.println("密码保护答案:" + client.getUser().getSecurityAnswer());
         System.out.println("==============================");
         System.out.println("请输入修改后昵称");
         String nickname = scanner.nextLine();
         System.out.println("请输入修改后邮箱");
         String email = scanner.nextLine();
-        client.sendMsg(nickname+"~"+email+"!"+client.getUser().getAccount());
-        client.readMsg(buffer);
-        new FunctionView(client,buffer).functionView();
+        client.sendMsg(nickname + "~" + email + "!" + client.getUser().getAccount());
+        String str = client.readMsg(buffer);
+        System.out.println(str);
+        if (str.equals("修改成功")){
+            client.getUser().setNickname(nickname);
+            client.getUser().setEmail(email);
+        }
+        new FunctionView(client, buffer).functionView();
     }
 
-    public void chargeView(){
+    public void chargeView() {
         client.sendMsg("充值");
         System.out.println("请输入你的充值金额！！！！");
         int money = scanner.nextInt();
-        client.sendMsg(client.getUser().getAccount()+"~"+money+".00");
-        client.readMsg(buffer);
-        System.out.println("当前用户余额："+(client.getUser().getBalance()+money));
-        new FunctionView(client,buffer).functionView();
+        client.sendMsg(client.getUser().getAccount() + "~" + money + ".00");
+        String msg = client.readMsg(buffer);
+        System.out.println(msg);
+        if (msg.equals("充值完成")) {
+            client.getUser().setBalance(client.getUser().getBalance()+money);
+            System.out.println("当前用户余额：" + client.getUser().getBalance());
+        }
+        new FunctionView(client, buffer).functionView();
+    }
+
+    public void productView(){
+        client.sendMsg("查看商品");
+        client.readProduct(buffer);
+        System.out.println(client.getProducts());
     }
 
 }

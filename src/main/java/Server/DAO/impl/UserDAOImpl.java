@@ -1,6 +1,8 @@
 package Server.DAO.impl;
 
 import Server.DAO.UserDAO;
+import Server.pojo.Product;
+import Server.util.comparator.ProductPriceComp;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import Server.pojo.User;
@@ -13,10 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
@@ -31,9 +30,12 @@ public class UserDAOImpl implements UserDAO {
     private String resMsg = null;
     private HashMap<String,Float> userMap = new HashMap<>();
     private SocketChannel channel;
+    private TreeMap<Product,Integer> products;
 
 
     public void init() {
+        ProductPriceComp comp = new ProductPriceComp();
+        products = new TreeMap<>(comp);
         String sql = "select * from Custom";
         try (Connection c = Connect.getConnection();
              PreparedStatement ps = c.prepareStatement(sql);
@@ -49,6 +51,30 @@ public class UserDAOImpl implements UserDAO {
         }
         System.out.println(telList.toString());
         System.out.println(accountList.toString());
+
+        String sql1 = "select * from product";
+        try(    Connection connection = Connect.getConnection();
+                PreparedStatement pss = connection.prepareStatement(sql1);
+                ){
+            pss.execute();
+            ResultSet resultSet = pss.executeQuery();
+            while (resultSet.next()){
+                if (resultSet.getInt("status") == 1) {
+                    Product product = new Product();
+                    product.setId(resultSet.getInt("id"));
+                    product.setProductName(resultSet.getString("product_name"));
+                    product.setPrice(resultSet.getFloat("price"));
+                    product.setSellCount(resultSet.getInt("sellCount"));
+                    product.setInventory(resultSet.getInt("inventory"));
+                    product.setCategoriesId(resultSet.getInt("categories_id"));
+                    product.setMerchantId(resultSet.getInt("merchant_id"));
+                    products.put(product,product.getMerchantId());
+                }
+            }
+            System.out.println(products.entrySet());
+        }catch (SQLException e){
+            System.out.println("加载商品出错");
+        }
 
     }
 
@@ -150,7 +176,6 @@ public class UserDAOImpl implements UserDAO {
         String sql = "update Custom set balance = ? where account = ?";
         float balance = userMap.get(account);
         float addMoney = Float.parseFloat(money);
-        System.out.println(addMoney);
         balance = balance + addMoney;
         try(    Connection connection = Connect.getConnection();
                 PreparedStatement ps = connection.prepareStatement(sql);
@@ -160,10 +185,33 @@ public class UserDAOImpl implements UserDAO {
             ps.execute();
             resMsg = "充值完成";
             userMap.put(account,balance);
-            System.out.println(userMap.entrySet());
             return resMsg;
         }catch (SQLException e){
             return resMsg;
+        }
+    }
+
+    @Override
+    public String pay(String account, float money) {
+        float balance = userMap.get(account);
+        if (money > balance ){
+            return new String("账户余额不足");
+        }
+        else {
+            String sql = "update Custom set balance = ? where account = ?";
+            balance = balance - money;
+            try(    Connection connection = Connect.getConnection();
+                    PreparedStatement ps = connection.prepareStatement(sql);
+                    ){
+                ps.setFloat(1,balance);
+                ps.setString(2,account);
+                ps.execute();
+                userMap.put(account,balance);
+                System.out.println(userMap.entrySet());
+                return new String("消费成功");
+            }catch (SQLException e){
+                return new String("未知错误");
+            }
         }
     }
 }

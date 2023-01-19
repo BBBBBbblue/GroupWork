@@ -2,6 +2,7 @@ package Client;
 
 import Client.util.UserReadThread;
 import Client.view.MainView.MainView;
+import Server.pojo.Product;
 import Server.pojo.User;
 import lombok.Data;
 
@@ -13,6 +14,8 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Scanner;
+import java.util.TreeMap;
+
 @Data
 /**
  * @author blue
@@ -25,6 +28,7 @@ public class Client {
     private SocketChannel channel;
     private static Scanner scanner = new Scanner(System.in);
     private User user;
+    private TreeMap<Product,Integer> products;
 
     public void init(){
         try {
@@ -49,17 +53,44 @@ public class Client {
         }
     }
 
-    public void readMsg(ByteBuffer buffer){
+    public String readMsg(ByteBuffer buffer){
+        String resMsg = null;
         try {
             if (selector.select()>0){
                 int len = channel.read(buffer);
                 if (len != -1){
                     buffer.flip();
-                    System.out.println(new String(buffer.array(),0,len));
+                    resMsg = new String(buffer.array(),0,len);
+                }
+                else {
+                    throw new IOException();
                 }
             }
         } catch (IOException e) {
-            System.out.println("主机已经断开");
+            resMsg = new String("主机已经断开");
+        } finally {
+            buffer.clear();
+            selector.selectedKeys().clear();
+            return resMsg;
+        }
+    }
+
+    public void readProduct(ByteBuffer buffer){
+        try {
+            if (selector.select() > 0) {
+                int len = channel.read(buffer);
+                if (len != -1){
+                    buffer.flip();
+                    // TODO: 2023/1/19 缓冲区满了，对象无法正常读取
+                    System.out.println(new String(buffer.array()));
+                    ByteArrayInputStream bis = new ByteArrayInputStream(buffer.array());
+                    ObjectInputStream oos = new ObjectInputStream(bis);
+                    setProducts((TreeMap<Product,Integer>)oos.readObject());
+                }
+            }
+
+        }catch (IOException | ClassNotFoundException e){
+            e.printStackTrace();
         } finally {
             buffer.clear();
             selector.selectedKeys().clear();
@@ -91,10 +122,8 @@ public class Client {
         Client client = new Client();
         client.init();
         ByteBuffer buffer = ByteBuffer.allocate(1024);
-        client.readMsg(buffer);
+        System.out.println(client.readMsg(buffer));
         new MainView(client,buffer).mainView();
-
-
         }
 
 

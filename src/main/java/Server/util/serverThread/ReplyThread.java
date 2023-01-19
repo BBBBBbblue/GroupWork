@@ -1,4 +1,4 @@
-package Server.util;
+package Server.util.serverThread;
 
 import Server.DAO.impl.ServerDAOImpl;
 import Server.Server;
