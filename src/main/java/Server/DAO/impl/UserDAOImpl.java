@@ -30,12 +30,11 @@ public class UserDAOImpl implements UserDAO {
     private String resMsg = null;
     private HashMap<String,Float> userMap = new HashMap<>();
     private SocketChannel channel;
-    private TreeMap<Product,Integer> products;
+    private HashMap<Product,Integer> products;
 
 
     public void init() {
-        ProductPriceComp comp = new ProductPriceComp();
-        products = new TreeMap<>(comp);
+        products = new HashMap<Product, Integer>();
         String sql = "select * from Custom";
         try (Connection c = Connect.getConnection();
              PreparedStatement ps = c.prepareStatement(sql);

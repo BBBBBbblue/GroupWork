@@ -13,6 +13,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -28,7 +30,7 @@ public class Client {
     private SocketChannel channel;
     private static Scanner scanner = new Scanner(System.in);
     private User user;
-    private TreeMap<Product,Integer> products;
+    private HashMap<Product,Integer> products;
 
     public void init(){
         try {
@@ -77,18 +79,16 @@ public class Client {
 
     public void readProduct(ByteBuffer buffer){
         try {
-            if (selector.select() > 0) {
+            if (selector.select()>0) {
                 int len = channel.read(buffer);
-                if (len != -1){
+                if (len != -1) {
                     buffer.flip();
-                    // TODO: 2023/1/19 缓冲区满了，对象无法正常读取
-                    System.out.println(new String(buffer.array()));
                     ByteArrayInputStream bis = new ByteArrayInputStream(buffer.array());
                     ObjectInputStream oos = new ObjectInputStream(bis);
-                    setProducts((TreeMap<Product,Integer>)oos.readObject());
+                    setProducts((HashMap<Product, Integer>) oos.readObject());
+                    // TODO: 2023/1/22 商品的分页查询
                 }
             }
-
         }catch (IOException | ClassNotFoundException e){
             e.printStackTrace();
         } finally {

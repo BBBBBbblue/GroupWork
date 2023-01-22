@@ -33,13 +33,14 @@ public class SendProductThread extends Thread  {
 
     @Override
     public void run() {
-        try {
-            ByteArrayOutputStream bo = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(bo);
-            oos.writeObject(server.getUserDAO().getProducts());
-            channel.write(buffer);
-        }catch (IOException e){
-            e.printStackTrace();
+            try {
+                ByteArrayOutputStream bo = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(bo);
+                oos.writeObject(server.getUserDAO().getProducts());
+                channel.write(ByteBuffer.wrap(bo.toByteArray()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
-}
+
