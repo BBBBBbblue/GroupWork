@@ -113,7 +113,7 @@ public class UserView {
     public void productView(){
         client.sendMsg("查看商品");
         client.readProduct(buffer);
-        System.out.println(client.getProducts());
+        client.productList();
     }
 
 }

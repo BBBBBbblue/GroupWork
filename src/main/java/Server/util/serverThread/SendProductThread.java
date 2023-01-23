@@ -38,6 +38,7 @@ public class SendProductThread extends Thread  {
                 ObjectOutputStream oos = new ObjectOutputStream(bo);
                 oos.writeObject(server.getUserDAO().getProducts());
                 channel.write(ByteBuffer.wrap(bo.toByteArray()));
+                oos.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

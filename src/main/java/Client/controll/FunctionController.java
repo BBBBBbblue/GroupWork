@@ -4,6 +4,7 @@ import Client.Client;
 import Client.util.UserReadReply;
 import Client.util.UserReadThread;
 import Client.view.MainView.FunctionView;
+import Client.view.MainView.ShopView;
 import Client.view.UserView.UserView;
 
 import java.nio.ByteBuffer;
@@ -40,7 +41,7 @@ public class FunctionController {
                 new FunctionView(client,buffer).functionView();
                 break;
             case 2:
-                new UserView(client,buffer).productView();
+                new ShopView(client,buffer).shopView();
                 break;
             case 3:
                 new UserView(client,buffer).updateView();

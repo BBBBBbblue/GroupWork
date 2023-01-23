@@ -13,10 +13,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Scanner;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 /**
@@ -55,6 +53,27 @@ public class Client {
         }
     }
 
+    public void productList(){
+        System.out.print("商品名称"+"\t");
+        System.out.print("商品价格"+"\t");
+        System.out.print("销量"+"\t");
+        System.out.print("库存"+"\t");
+        System.out.println("商品ID"+"\t");
+        for (Iterator<Map.Entry<Product,Integer>> iterator = products.entrySet().iterator();iterator.hasNext();)
+        {
+            Map.Entry<Product,Integer> entry = iterator.next();
+            System.out.print(entry.getKey().getProductName()+"\t");
+            System.out.print(entry.getKey().getPrice()+"\t");
+            System.out.print(entry.getKey().getSellCount()+"\t");
+            System.out.print(entry.getKey().getInventory()+"\t");
+            System.out.print(entry.getKey().getId()+"\t");
+            System.out.println();
+        }
+        System.out.println("\t"+"\t"+"页数"+"1"+"/"+products.size()/4);
+        // TODO: 2023/1/24 重载方法实现翻页
+
+    }
+
     public String readMsg(ByteBuffer buffer){
         String resMsg = null;
         try {
@@ -84,9 +103,9 @@ public class Client {
                 if (len != -1) {
                     buffer.flip();
                     ByteArrayInputStream bis = new ByteArrayInputStream(buffer.array());
-                    ObjectInputStream oos = new ObjectInputStream(bis);
-                    setProducts((HashMap<Product, Integer>) oos.readObject());
-                    // TODO: 2023/1/22 商品的分页查询
+                    ObjectInputStream ois = new ObjectInputStream(bis);
+                    setProducts((HashMap<Product, Integer>) ois.readObject());
+                    ois.close();
                 }
             }
         }catch (IOException | ClassNotFoundException e){
@@ -106,6 +125,7 @@ public class Client {
                     ByteArrayInputStream bis = new ByteArrayInputStream(buffer.array());
                     ObjectInputStream ois = new ObjectInputStream(bis);
                     setUser((User) ois.readObject());
+                    ois.close();
                 }
             }
         } catch (IOException e) {

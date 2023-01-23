@@ -67,7 +67,6 @@ public class Server {
     public void analysis(SelectionKey key){
         SocketChannel channel = (SocketChannel)key.channel();
         ByteBuffer buffer = ByteBuffer.allocate(1024);
-        // TODO: 2023/1/20 不需要这么大的缓冲区，只是试一试
         String str = null;
         try{
             str = channel.getLocalAddress().toString();
