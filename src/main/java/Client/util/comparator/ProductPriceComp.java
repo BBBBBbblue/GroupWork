@@ -1,4 +1,4 @@
-package Server.util.comparator;
+package Client.util.comparator;
 
 import Server.pojo.Product;
 import lombok.Data;
@@ -16,7 +16,7 @@ import java.util.Comparator;
  * @author blue
  * @date 2023/1/19 22:44
  **/
-public class ProductPriceComp implements Comparator<Server.pojo.Product>, Serializable {
+public class ProductPriceComp implements Comparator<Server.pojo.Product>{
 
     @Override
     public int compare(Product o1, Product o2) {

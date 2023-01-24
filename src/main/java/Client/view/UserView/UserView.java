@@ -73,7 +73,7 @@ public class UserView {
     public void updateView() {
         client.sendMsg("修改资料");
         System.out.println("当前用户状态");
-        System.out.println("==============================");
+        System.out.println("===========================================================");
         System.out.println("登录用户为:" + client.getUser().getAccount());
         System.out.println("当前昵称:" + client.getUser().getNickname());
         System.out.println("当前余额:" + client.getUser().getBalance());
@@ -110,10 +110,6 @@ public class UserView {
         new FunctionView(client, buffer).functionView();
     }
 
-    public void productView(){
-        client.sendMsg("查看商品");
-        client.readProduct(buffer);
-        client.productList();
-    }
+
 
 }
