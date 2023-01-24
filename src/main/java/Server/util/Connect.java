@@ -20,7 +20,7 @@ public class Connect {
     private static String password;
 
     static {
-        File configFile = new File("D:\\java_groupWork\\src\\main\\java\\Server\\util\\utilConnect.properties");
+        File configFile = new File("D:\\Program Files\\ideaIU-2019.2.4.win\\git-workspace\\GroupWork\\src\\main\\java\\Server\\util\\utilConnect.properties");
         Properties config = new Properties();
         try {
             config.load(new FileInputStream(configFile));
