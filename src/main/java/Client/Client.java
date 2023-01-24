@@ -94,12 +94,13 @@ public class Client {
                 else {
                     throw new IOException();
                 }
+
             }
         } catch (IOException e) {
             resMsg = new String("主机已经断开");
         } finally {
-            buffer.clear();
             selector.selectedKeys().clear();
+            buffer.clear();
             return resMsg;
         }
     }

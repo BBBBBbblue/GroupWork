@@ -27,17 +27,7 @@ public class FunctionController {
             case 1:
                 client.sendMsg("智能客服");
                 UserReadReply userReadReply = new UserReadReply(buffer,client);
-                userReadReply.start();
-                String msg = "0";
-                while (!msg.equals("1")){
-                    client.sendMsg(msg = scanner.nextLine());
-                }
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    System.out.println("线程睡出了问题");
-                }
-                userReadReply.stop();
+                userReadReply.run();
                 new FunctionView(client,buffer).functionView();
                 break;
             case 2:
