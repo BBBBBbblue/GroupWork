@@ -84,27 +84,26 @@ public class Server {
                 break;
                 case "用户登录":
                     LoginThread loginThread = new LoginThread(userMsg,channel,buffer,userDAO,this);
-                    loginThread.run();
+                    loginThread.start();
                 break;
                 case "用户注册":
                     RegisterThread registerThread = new RegisterThread(userMsg,channel,buffer,userDAO,this);
-                    registerThread.run();
+                    registerThread.start();
                     break;
                 case "修改资料":
                     UpdateThread updateThread = new UpdateThread(userMsg,channel,buffer,userDAO,this);
-                    updateThread.run();
+                    updateThread.start();
                     break;
                 case"充值":
                     ChargeThread chargeThread = new ChargeThread(userMsg,channel,buffer,userDAO,this);
-                    chargeThread.run();
+                    chargeThread.start();
                     break;
                 case"结账":
                     PayThread payThread = new PayThread(userMsg,channel,buffer,userDAO,this);
-                    payThread.run();
-                    break;
+                    payThread.start();
                 case"查看商品":
                     SendProductThread sendProductThread = new SendProductThread(userMsg,channel,buffer,userDAO,this);
-                    sendProductThread.run();
+                    sendProductThread.start();
                     break;
                 default:break;
             }
