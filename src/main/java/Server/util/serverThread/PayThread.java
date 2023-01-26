@@ -32,24 +32,12 @@ public class PayThread extends Thread {
     @Override
     public void run() {
         try{
-            while (true){
-                int len = channel.read(buffer);
-                if (len == -1){
-                    throw new IOException();
-                }
-                if (buffer.position() != 0){
-                    userMsg = new String(buffer.array(),0,len);
-                    buffer.clear();
                     index = userMsg.indexOf('~');
                     account = userMsg.substring(0,index);
                     money = userMsg.substring(index+1);
                     float price = Float.parseFloat(money);
                     String resMsg = userDAO.pay(account,price);
                     channel.write(ByteBuffer.wrap(resMsg.getBytes()));
-                    return;
-                }
-            }
-
         }catch (IOException e){
             System.out.println("充值服务器出错");
         }

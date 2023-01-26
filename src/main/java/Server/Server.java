@@ -75,8 +75,16 @@ public class Server {
                 throw new IOException();
             }
             String userMsg = new String(buffer.array(),0,len);
+            String analysisMsg = null;
+            if (userMsg.length() > 4) {
+                 analysisMsg = userMsg.substring(0, 4);
+                userMsg = userMsg.substring(4);
+            }
+            else {
+                 analysisMsg = userMsg;
+            }
             buffer.clear();
-            switch (userMsg){
+            switch (analysisMsg){
                 case "智能客服":
                     response("智能客服坤坤，为您服务",channel);
                     ReplyThread thread = new ReplyThread(userMsg,channel,buffer,serverDAO,this);
@@ -84,26 +92,26 @@ public class Server {
                 break;
                 case "用户登录":
                     LoginThread loginThread = new LoginThread(userMsg,channel,buffer,userDAO,this);
-                    loginThread.start();
+                    loginThread.run();
                 break;
                 case "用户注册":
                     RegisterThread registerThread = new RegisterThread(userMsg,channel,buffer,userDAO,this);
-                    registerThread.start();
+                    registerThread.run();
                     break;
                 case "修改资料":
                     UpdateThread updateThread = new UpdateThread(userMsg,channel,buffer,userDAO,this);
                     updateThread.start();
                     break;
-                case"充值":
+                case"用户充值":
                     ChargeThread chargeThread = new ChargeThread(userMsg,channel,buffer,userDAO,this);
-                    chargeThread.start();
+                    chargeThread.run();
                     break;
-                case"结账":
+                case"用户结账":
                     PayThread payThread = new PayThread(userMsg,channel,buffer,userDAO,this);
-                    payThread.start();
+                    payThread.run();
                 case"查看商品":
                     SendProductThread sendProductThread = new SendProductThread(userMsg,channel,buffer,userDAO,this);
-                    sendProductThread.start();
+                    sendProductThread.run();
                     break;
                 default:break;
             }
@@ -154,5 +162,6 @@ public class Server {
     public static void main(String[] args) {
         Server s = new Server();
         s.init().start();
+        // TODO: 2023/1/26 将线程由服务端转移到客户端
     }
 }

@@ -32,12 +32,11 @@ public class UserView {
     }
 
     public void loginView() {
-        client.sendMsg("用户登录");
         System.out.println("请输入你的用户名");
         String account = scanner.nextLine();
         System.out.println("请输入你的密码");
         String password = scanner.nextLine();
-        client.sendMsg(account + "~" + password);
+        client.sendMsg("用户登录"+account + "~" + password);
         client.readObject(buffer);
         if (client.getUser() != null) {
             System.out.println("登录成功");
@@ -52,7 +51,6 @@ public class UserView {
     }
 
     public void registerView() {
-        client.sendMsg("用户注册");
 //        UserReadThread urd = new UserReadThread(buffer,client);
 //        urd.start();
         System.out.println("请输入不超过10位用户名");
@@ -65,13 +63,12 @@ public class UserView {
         String password = scanner.nextLine();
         System.out.println("请输入电话号码");
         String telephone = scanner.nextLine();
-        client.sendMsg(account + "~" + password + "@" + telephone);
+        client.sendMsg("用户注册"+account + "~" + password + "@" + telephone);
         System.out.println(client.readMsg(buffer));
         new MainView(client, buffer).mainView();
     }
 
     public void updateView() {
-        client.sendMsg("修改资料");
         System.out.println("当前用户状态");
         System.out.println("===========================================================");
         System.out.println("登录用户为:" + client.getUser().getAccount());
@@ -86,7 +83,7 @@ public class UserView {
         String nickname = scanner.nextLine();
         System.out.println("请输入修改后邮箱");
         String email = scanner.nextLine();
-        client.sendMsg(nickname + "~" + email + "!" + client.getUser().getAccount());
+        client.sendMsg("修改资料"+nickname + "~" + email + "!" + client.getUser().getAccount());
         String str = client.readMsg(buffer);
         System.out.println(str);
         if (str.equals("修改成功")){
@@ -97,10 +94,9 @@ public class UserView {
     }
 
     public void chargeView() {
-        client.sendMsg("充值");
         System.out.println("请输入你的充值金额！！！！");
         int money = scanner.nextInt();
-        client.sendMsg(client.getUser().getAccount() + "~" + money + ".00");
+        client.sendMsg("用户充值"+client.getUser().getAccount() + "~" + money + ".00");
         String msg = client.readMsg(buffer);
         System.out.println(msg);
         if (msg.equals("充值完成")) {

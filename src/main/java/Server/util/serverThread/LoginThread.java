@@ -37,14 +37,6 @@ public class LoginThread extends Thread {
     @Override
     public void run() {
         try {
-            while (true) {
-                int len = channel.read(buffer);
-                if (len == -1){
-                    throw new IOException();
-                }
-                if (buffer.position() != 0){
-                    userMsg = new String(buffer.array(),0,len);
-                    buffer.clear();
                     index = userMsg.indexOf('~');
                     account = userMsg.substring(0,index);
                     password = userMsg.substring(index+1);
@@ -53,9 +45,6 @@ public class LoginThread extends Thread {
                     ObjectOutputStream oos = new ObjectOutputStream(bo);
                     oos.writeObject(user);
                     channel.write(ByteBuffer.wrap(bo.toByteArray()));
-                    return;
-                }
-            }
 
         } catch (NullPointerException e) {
             server.response("用户名密码错误，或账号已经注销，请重试",channel);

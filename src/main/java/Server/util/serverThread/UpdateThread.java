@@ -36,23 +36,14 @@ public class UpdateThread extends Thread {
     @Override
     public void run() {
         try {
-            while (true){
-                int len = channel.read(buffer);
-                if (len == -1){
-                    throw new IOException();
-                }
-                if (buffer.position() != 0){
-                    userMsg = new String(buffer.array(),0,len);
-                    buffer.clear();
+
                     index = userMsg.indexOf('~');
                     nickname = userMsg.substring(0,index);
                     email = userMsg.substring(index+1,userMsg.indexOf('!'));
                     account = userMsg.substring(userMsg.indexOf('!')+1);
                     String resMsg = userDAO.update(nickname,email,account);
                     channel.write(ByteBuffer.wrap(resMsg.getBytes()));
-                    return;
-                }
-            }
+
         }catch (IOException e){
             System.out.println("更新出错");
         }

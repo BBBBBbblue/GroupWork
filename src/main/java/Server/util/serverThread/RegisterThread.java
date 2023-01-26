@@ -33,14 +33,6 @@ public class RegisterThread extends Thread {
     @Override
     public void run() {
         try {
-            while (true){
-                int len = channel.read(buffer);
-                if (len == -1){
-                    throw new IOException();
-                }
-                if (buffer.position() != 0){
-                    userMsg = new String(buffer.array(),0,len);
-                    buffer.clear();
                     index = userMsg.indexOf('~');
                     account = userMsg.substring(0,index);
                     userMsg = userMsg.substring(index+1);
@@ -50,9 +42,6 @@ public class RegisterThread extends Thread {
                     String resMsg = userDAO.register(account,password,telephone);
                     channel.write(ByteBuffer.wrap(resMsg.getBytes()));
 
-                    return;
-                }
-            }
         }catch (IOException e){
             System.out.println("注册出错");
         }
