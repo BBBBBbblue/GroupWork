@@ -54,30 +54,32 @@ public class Client {
     }
 
     public void productList(TreeMap<Product,Integer> maps,int i){
-        System.out.println("====================================================================");
-        System.out.println("商品名称"+"\t");
+        System.out.print("====================================================================");
+        System.out.println();
+        System.out.print("商品名称"+"\t");
         System.out.print("商品价格"+"\t");
         System.out.print("销量"+"\t");
         System.out.print("库存"+"\t");
-        System.out.println("商品ID"+"\t");
+        System.out.print("商品ID"+"\t");
         int count = 0;
         for (Iterator<Map.Entry<Product,Integer>> iterator = maps.entrySet().iterator();iterator.hasNext();)
         {
                 Map.Entry<Product, Integer> entry = iterator.next();
             if (count / 3 ==(i-1)) {
+                System.out.println();
                 System.out.print(entry.getKey().getProductName() + "\t");
                 System.out.print(entry.getKey().getPrice() + "\t");
                 System.out.print(entry.getKey().getSellCount() + "\t");
                 System.out.print(entry.getKey().getInventory() + "\t");
                 System.out.print(entry.getKey().getId() + "\t");
-                System.out.println();
             }
             count++;
             if (count / 3 > (i-1)){
                 break;
             }
         }
-        System.out.println("\t"+"页数"+"1"+"/"+maps.size()/3+"\t"+"跳转到第__页"+"\t"+"输入0打开排序菜单");
+        System.out.println();
+        System.out.print("\t"+"页数"+i+"/"+(int)Math.ceil(maps.size()/3)+"\t"+"跳转到第__页"+"\t"+"输入0打开排序菜单");
         // TODO: 2023/1/24 重载方法实现翻页
 
     }
