@@ -1,6 +1,7 @@
 package Server.DAO.impl;
 
 import Server.DAO.UserDAO;
+import Server.pojo.CartsDetail;
 import Server.pojo.Product;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,10 +9,7 @@ import Server.pojo.User;
 import Server.util.Connect;
 
 import java.nio.channels.SocketChannel;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 @Data
@@ -121,6 +119,7 @@ public class UserDAOImpl implements UserDAO {
 
     @Override
     public String register(String account,String password,String telephone) {
+        int id ;
         if (accountList.contains(account)){
             resMsg = "用户名已存在";
             return resMsg;
@@ -130,13 +129,25 @@ public class UserDAOImpl implements UserDAO {
             return resMsg;
         }
         String sql = "insert into Custom(account,password,telephone) values (?,?,?)";
-        try (   Connection connection = Connect.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql);
-                ) {
+        String carts = "insert into Carts (user_id) values (?)";
+        try  {  Connection connection = Connect.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1,account);
             ps.setString(2,password);
             ps.setString(3,telephone);
-            ps.execute();
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            rs.next();
+            id = rs.getInt(1);
+            System.out.println(id);
+            Connection cart = Connect.getConnection();
+            PreparedStatement pss = cart.prepareStatement(carts);
+            pss.setInt(1,id);
+            pss.execute();
+            ps.close();
+            connection.close();
+            pss.close();
+            cart.close();
             resMsg = "注册成功，请尽快完善您的资料";
             telList.add(telephone);
             accountList.add(account);
@@ -208,6 +219,46 @@ public class UserDAOImpl implements UserDAO {
             }catch (SQLException e){
                 return new String("未知错误");
             }
+        }
+    }
+
+    @Override
+    public HashMap<String, LinkedList<CartsDetail>> getCarts(int id) {
+        HashMap<String,LinkedList<CartsDetail>> list = new HashMap<>();
+        String sql = "SELECT product_id,carts_id,price,number,m.`status`,m.gmt_create,m.gmt_modified,product_name,merchant_name FROM(" +
+                "SELECT product_id,carts_id,price,number,a.`status`,a.gmt_create,a.gmt_modified,product_name,merchant_id FROM ((" +
+                "SELECT * FROM carts_detail " +
+                "WHERE carts_id = (SELECT id FROM Carts WHERE user_id = ?)) AS a ,product AS p)" +
+                "WHERE a.product_id = p.id) AS m , merchant AS n WHERE m.merchant_id = n.id";
+        try(    Connection connection = Connect.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ){
+            ps.setInt(1,id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                if (rs.getInt("status") == 1 ){
+                    CartsDetail cartsDetail = new CartsDetail();
+                    cartsDetail.setCartsId(rs.getInt("carts_id"));
+                    cartsDetail.setGmtCreate(rs.getTimestamp("gmt_create"));
+                    cartsDetail.setGmtModified(rs.getTimestamp("gmt_modified"));
+                    cartsDetail.setProductId(rs.getInt("product_id"));
+                    cartsDetail.setNumber(rs.getInt("number"));
+                    cartsDetail.setPrice(rs.getFloat("price"));
+                    cartsDetail.setProductName(rs.getString("product_name"));
+                    if (list.containsKey(rs.getString("merchant_name"))){
+                        list.get(rs.getString("merchant_name")).add(cartsDetail);
+                    }
+                    else {
+                        LinkedList<CartsDetail> linkedList = new LinkedList<>();
+                        linkedList.add(cartsDetail);
+                        list.put(rs.getString("merchant_name"),linkedList);
+                    }
+                }
+            }
+            System.out.println(list);
+            return list;
+        }catch (SQLException e){
+            return null;
         }
     }
 }

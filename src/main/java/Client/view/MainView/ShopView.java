@@ -61,7 +61,16 @@ public class ShopView {
     }
 
     public void cartsView(){
-        // TODO: 2023/1/24 购物车视图有待构建
+        int j;
+        client.sendMsg("看购物车"+client.getUser().getId());
+        client.readCarts(buffer);
+        client.cartsList(1);
+        while ((j = scanner.nextInt()) != 0){
+            client.cartsList(j);
+        }
+        System.out.println("1,修改数量 2.移除商品 3.添加订单 4.返回");
+        new ShopController(client,buffer).cartsListChoose(scanner.nextInt());
+
 
     }
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**购物车详情实体
@@ -13,7 +14,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class CartsDetail {
+public class CartsDetail implements Serializable {
     private int id;
     private int productId;
     private int cartsId;
@@ -21,4 +22,7 @@ public class CartsDetail {
     private int status;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
+    private String productName;
+    private float price;
+    private static final long serialVersionUID = 2L;
 }

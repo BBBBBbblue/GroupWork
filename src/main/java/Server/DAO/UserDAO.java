@@ -1,6 +1,11 @@
 package Server.DAO;
 
+import Server.pojo.CartsDetail;
 import Server.pojo.User;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 /**
  * @author blue
@@ -44,5 +49,11 @@ public interface UserDAO {
      * @return 字符串信息，方便返回
      */
      String pay(String account,float money);
+
+    /** 用户查看购物车
+     * @param id 用户主键id
+     * @return 购物车情况集合
+     */
+     HashMap<String, LinkedList<CartsDetail>> getCarts(int id);
 
 }
