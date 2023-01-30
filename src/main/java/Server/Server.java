@@ -121,6 +121,9 @@ public class Server {
                 case"改购物车":
                     new ChangeCartsDetailNumberThread(userMsg,channel,buffer,userDAO,this).run();
                     break;
+                case "删购物车":
+                    new RemoveCartsDetailThread(userMsg,channel,buffer,userDAO,this).run();
+                    break;
                 default:break;
             }
         }catch (IOException e){

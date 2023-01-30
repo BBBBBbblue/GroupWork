@@ -280,4 +280,20 @@ public class UserDAOImpl implements UserDAO {
             return resMsg;
         }
     }
+
+    @Override
+    public String removeCartDetail(int id) {
+        String sql = "update carts_detail set status = 3 where id = ?";
+        try(    Connection connection = Connect.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ){
+            ps.setInt(1,id);
+            ps.execute();
+            resMsg = "删除成功";
+            return resMsg;
+        }catch (SQLException e){
+            resMsg = "删除失败";
+            return resMsg;
+        }
+    }
 }

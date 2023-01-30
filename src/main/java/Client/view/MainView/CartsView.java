@@ -4,6 +4,7 @@ import Client.Client;
 import Server.pojo.CartsDetail;
 
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 import java.util.Scanner;
 
 /**
@@ -41,6 +42,20 @@ public class CartsView {
     }
 
     public void removeProduct(){
+        int id;String name;
+        System.out.println("输入商户名称");
+        name = scanner.nextLine();
+        System.out.println("输入详情id");
+        id = scanner.nextInt();
+        client.sendMsg("删购物车"+id);
+        System.out.println(client.readMsg(buffer));
+        for (Iterator<CartsDetail> iterator = client.getCarts().get(name).iterator(); iterator.hasNext();){
+            if (iterator.next().getId() == id){
+                iterator.remove();
+                break;
+            }
+        }
+        new ShopView(client,buffer).shopView();
 
     }
 

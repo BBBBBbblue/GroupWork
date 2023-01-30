@@ -210,11 +210,5 @@ public class Client {
         System.out.println(client.readMsg(buffer));
         new MainView(client,buffer).mainView();
         }
-
-
-
-
-
-
     }
 

@@ -17,9 +17,6 @@ public class ChangeCartsDetailNumberThread extends Thread {
     private ByteBuffer buffer;
     private UserDAOImpl userDAO;
     private Server server;
-    private int index;
-    private String account;
-    private String balance;
 
 
     public ChangeCartsDetailNumberThread(String userMsg, SocketChannel channel, ByteBuffer buffer, UserDAOImpl userDAO, Server server) {
