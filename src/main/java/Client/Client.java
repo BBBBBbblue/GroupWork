@@ -28,6 +28,7 @@ public class Client {
     private SocketChannel channel;
     private static Scanner scanner = new Scanner(System.in);
     private User user;
+    public HashMap<String,Object> hh;
     private HashMap<Product,Integer> products;
 
     public void init(){
