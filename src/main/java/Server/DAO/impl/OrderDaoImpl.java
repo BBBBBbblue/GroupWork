@@ -121,7 +121,7 @@ public class OrderDaoImpl implements OrderDao {
         ){
             pstmt.setInt(1,status);
             pstmt.setTimestamp(2,new Timestamp(System.currentTimeMillis()));
-            pstmt.setInt(3,orderId);
+            pstmt.setInt(3, orderId);
             pstmt.execute();
         } catch (SQLException e) {
             e.printStackTrace();
