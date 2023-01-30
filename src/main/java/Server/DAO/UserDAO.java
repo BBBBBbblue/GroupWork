@@ -56,4 +56,11 @@ public interface UserDAO {
      */
      HashMap<String, LinkedList<CartsDetail>> getCarts(int id);
 
+    /** 用户更改购物车订单详情
+     * @param id 订单详情的主键id
+     * @param number 更改后数量
+     * @return 字符串方便用户端读取
+     */
+     String changeCartDetailsNumber(int id,int number);
+
 }

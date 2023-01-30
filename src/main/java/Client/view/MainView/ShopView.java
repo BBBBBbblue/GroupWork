@@ -1,6 +1,7 @@
 package Client.view.MainView;
 
 import Client.Client;
+import Client.controll.CartsController;
 import Client.controll.ShopController;
 import Client.util.comparator.ProductPriceComp;
 import Server.pojo.Product;
@@ -69,8 +70,6 @@ public class ShopView {
             client.cartsList(j);
         }
         System.out.println("1,修改数量 2.移除商品 3.添加订单 4.返回");
-        new ShopController(client,buffer).cartsListChoose(scanner.nextInt());
-
-
+        new CartsController(client,buffer).cartsListChoose(scanner.nextInt());
     }
 }

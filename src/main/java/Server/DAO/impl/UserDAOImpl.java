@@ -225,8 +225,8 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public HashMap<String, LinkedList<CartsDetail>> getCarts(int id) {
         HashMap<String,LinkedList<CartsDetail>> list = new HashMap<>();
-        String sql = "SELECT product_id,carts_id,price,number,m.`status`,m.gmt_create,m.gmt_modified,product_name,merchant_name FROM(" +
-                "SELECT product_id,carts_id,price,number,a.`status`,a.gmt_create,a.gmt_modified,product_name,merchant_id FROM ((" +
+        String sql = "SELECT product_id,carts_id,price,number,m.id,m.`status`,m.gmt_create,m.gmt_modified,product_name,merchant_name FROM(" +
+                "SELECT product_id,carts_id,price,number,a.id,a.`status`,a.gmt_create,a.gmt_modified,product_name,merchant_id FROM ((" +
                 "SELECT * FROM carts_detail " +
                 "WHERE carts_id = (SELECT id FROM Carts WHERE user_id = ?)) AS a ,product AS p)" +
                 "WHERE a.product_id = p.id) AS m , merchant AS n WHERE m.merchant_id = n.id";
@@ -238,6 +238,8 @@ public class UserDAOImpl implements UserDAO {
             while (rs.next()){
                 if (rs.getInt("status") == 1 ){
                     CartsDetail cartsDetail = new CartsDetail();
+                    cartsDetail.setId(rs.getInt("id"));
+                    cartsDetail.setStatus(rs.getInt("status"));
                     cartsDetail.setCartsId(rs.getInt("carts_id"));
                     cartsDetail.setGmtCreate(rs.getTimestamp("gmt_create"));
                     cartsDetail.setGmtModified(rs.getTimestamp("gmt_modified"));
@@ -259,6 +261,23 @@ public class UserDAOImpl implements UserDAO {
             return list;
         }catch (SQLException e){
             return null;
+        }
+    }
+
+    @Override
+    public String changeCartDetailsNumber(int id, int number) {
+        String sql = "update carts_detail set number = ? where id = ?";
+        try(     Connection connection = Connect.getConnection();
+                 PreparedStatement ps = connection.prepareStatement(sql);
+                ) {
+            ps.setInt(1,number);
+            ps.setInt(2,id);
+            ps.execute();
+            resMsg = "修改成功";
+            return resMsg;
+        }catch (SQLException e){
+            resMsg = "修改失败";
+            return resMsg;
         }
     }
 }

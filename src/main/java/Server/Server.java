@@ -117,6 +117,10 @@ public class Server {
                     int i = Integer.parseInt(userMsg);
                     SendCartsThread sendCartsThread = new SendCartsThread(i,channel,buffer,userDAO,this);
                     sendCartsThread.run();
+                    break;
+                case"改购物车":
+                    new ChangeCartsDetailNumberThread(userMsg,channel,buffer,userDAO,this).run();
+                    break;
                 default:break;
             }
         }catch (IOException e){

@@ -31,6 +31,8 @@ public class Client {
     private User user;
     private HashMap<Product,Integer> products;
     private HashMap<String,LinkedList<CartsDetail>> carts;
+    private ArrayList<CartsDetail> updateCartsDetail;
+
 
     public void init(){
         try {
@@ -86,25 +88,33 @@ public class Client {
     }
 
     public void cartsList(int i){
-
-        int count = 0;
-        for (Map.Entry<String, LinkedList<CartsDetail>> entry : carts.entrySet()) {
-            if (count == i){
-                break;
-            }
+        if (i > carts.size()){
             System.out.println();
             System.out.println("=============================================");
-            System.out.println("商户名称："+ entry.getKey());
+            System.out.println("当前页面不存在");
             System.out.println();
-            System.out.print("商品名称"+"\t"+"购买数量"+"\t"+"商品单价"+"\t");
-            for (CartsDetail cartsDetail : entry.getValue()) {
+            System.out.print("\t"+"页数"+i+"/"+carts.size()+"\t"+"跳转到第__页"+"\t");
+            return;
+        }
+
+        int count = 1;
+        for (Map.Entry<String, LinkedList<CartsDetail>> entry : carts.entrySet()) {
+            if (count == i) {
                 System.out.println();
-                System.out.print(cartsDetail.getProductName()+"\t"+cartsDetail.getNumber()+"\t"+cartsDetail.getPrice());
+                System.out.println("=============================================");
+                System.out.println("商户名称：" + entry.getKey());
+                System.out.println();
+                System.out.print("商品名称" + "\t" + "购买数量" + "\t" + "商品单价" + "\t"+"详情id");
+                for (CartsDetail cartsDetail : entry.getValue()) {
+                    System.out.println();
+                    System.out.print(cartsDetail.getProductName() + "\t" + cartsDetail.getNumber() + "\t" + cartsDetail.getPrice()+"\t"+cartsDetail.getId());
+                }
+                break;
             }
             count++;
         }
         System.out.println();
-        System.out.print("\t"+"页数"+i+"/"+(int)Math.ceil(carts.size()/3)+"\t"+"跳转到第__页"+"\t");
+        System.out.print("\t"+"页数"+i+"/"+carts.size()+"\t"+"跳转到第__页"+"\t");
     }
 
     public String readMsg(ByteBuffer buffer){
