@@ -2,6 +2,7 @@ package Client;
 
 import Client.util.UserReadThread;
 import Client.view.MainView.MainView;
+import Server.pojo.CartsDetail;
 import Server.pojo.Product;
 import Server.pojo.User;
 import lombok.Data;
@@ -30,6 +31,9 @@ public class Client {
     private User user;
     public HashMap<String,Object> hh;
     private HashMap<Product,Integer> products;
+    private HashMap<String,LinkedList<CartsDetail>> carts;
+    private ArrayList<CartsDetail> updateCartsDetail;
+
 
     public void init(){
         try {
@@ -80,9 +84,38 @@ public class Client {
             }
         }
         System.out.println();
-        System.out.print("\t"+"页数"+i+"/"+(int)Math.ceil(maps.size()/3)+"\t"+"跳转到第__页"+"\t"+"输入0打开排序菜单");
-        // TODO: 2023/1/24 重载方法实现翻页
+        System.out.print("\t"+"页数"+i+"/"+(int)Math.ceil(maps.size()/3)+"\t"+"跳转到第__页"+"\t");
 
+    }
+
+    public void cartsList(int i){
+        if (i > carts.size()){
+            System.out.println();
+            System.out.println("=============================================");
+            System.out.println("当前页面不存在");
+            System.out.println();
+            System.out.print("\t"+"页数"+i+"/"+carts.size()+"\t"+"跳转到第__页"+"\t");
+            return;
+        }
+
+        int count = 1;
+        for (Map.Entry<String, LinkedList<CartsDetail>> entry : carts.entrySet()) {
+            if (count == i) {
+                System.out.println();
+                System.out.println("=============================================");
+                System.out.println("商户名称：" + entry.getKey());
+                System.out.println();
+                System.out.print("商品名称" + "\t" + "购买数量" + "\t" + "商品单价" + "\t"+"详情id");
+                for (CartsDetail cartsDetail : entry.getValue()) {
+                    System.out.println();
+                    System.out.print(cartsDetail.getProductName() + "\t" + cartsDetail.getNumber() + "\t" + cartsDetail.getPrice()+"\t"+cartsDetail.getId());
+                }
+                break;
+            }
+            count++;
+        }
+        System.out.println();
+        System.out.print("\t"+"页数"+i+"/"+carts.size()+"\t"+"跳转到第__页"+"\t");
     }
 
     public String readMsg(ByteBuffer buffer){
@@ -108,6 +141,7 @@ public class Client {
         }
     }
 
+
     public void readProduct(ByteBuffer buffer){
         try {
             if (selector.select()>0) {
@@ -123,6 +157,26 @@ public class Client {
         }catch (IOException | ClassNotFoundException e){
             e.printStackTrace();
         } finally {
+            buffer.clear();
+            selector.selectedKeys().clear();
+        }
+    }
+
+    public void readCarts(ByteBuffer buffer){
+        try{
+            if (selector.select() > 0){
+                int len = channel.read(buffer);
+                if (len != -1){
+                    buffer.flip();
+                    ByteArrayInputStream bi = new ByteArrayInputStream(buffer.array());
+                    ObjectInputStream ois = new ObjectInputStream(bi);
+                    setCarts((HashMap<String, LinkedList<CartsDetail>>) ois.readObject());
+                    ois.close();
+                }
+            }
+        }catch (IOException | ClassNotFoundException e){
+            e.printStackTrace();
+        }finally {
             buffer.clear();
             selector.selectedKeys().clear();
         }
@@ -153,15 +207,9 @@ public class Client {
     public static void main(String[] args) {
         Client client = new Client();
         client.init();
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        ByteBuffer buffer = ByteBuffer.allocate(2048);
         System.out.println(client.readMsg(buffer));
         new MainView(client,buffer).mainView();
         }
-
-
-
-
-
-
     }
 

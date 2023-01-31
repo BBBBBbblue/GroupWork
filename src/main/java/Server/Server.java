@@ -66,7 +66,7 @@ public class Server {
     }
     public void analysis(SelectionKey key){
         SocketChannel channel = (SocketChannel)key.channel();
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        ByteBuffer buffer = ByteBuffer.allocate(2048);
         String str = null;
         try{
             str = channel.getLocalAddress().toString();
@@ -112,6 +112,17 @@ public class Server {
                 case"查看商品":
                     SendProductThread sendProductThread = new SendProductThread(userMsg,channel,buffer,userDAO,this);
                     sendProductThread.run();
+                    break;
+                case"看购物车":
+                    int i = Integer.parseInt(userMsg);
+                    SendCartsThread sendCartsThread = new SendCartsThread(i,channel,buffer,userDAO,this);
+                    sendCartsThread.run();
+                    break;
+                case"改购物车":
+                    new ChangeCartsDetailNumberThread(userMsg,channel,buffer,userDAO,this).run();
+                    break;
+                case "删购物车":
+                    new RemoveCartsDetailThread(userMsg,channel,buffer,userDAO,this).run();
                     break;
                 default:break;
             }
@@ -162,6 +173,6 @@ public class Server {
     public static void main(String[] args) {
         Server s = new Server();
         s.init().start();
-        // TODO: 2023/1/26 将线程由服务端转移到客户端
+
     }
 }
