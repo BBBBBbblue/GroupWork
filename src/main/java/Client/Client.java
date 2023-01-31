@@ -1,21 +1,17 @@
 package Client;
-
-import Client.util.UserReadThread;
 import Client.view.MainView.MainView;
 import Server.pojo.CartsDetail;
 import Server.pojo.Product;
 import Server.pojo.User;
 import lombok.Data;
-
 import java.io.*;
 import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 @Data
 /**
@@ -200,6 +196,12 @@ public class Client {
         } finally {
             buffer.clear();
             selector.selectedKeys().clear();
+        }
+    }
+
+    public void addrList(){
+        for (Map.Entry<String, Integer> entry : user.getAddr().entrySet()) {
+            System.out.println("地址编号："+entry.getValue()+"\t"+"地址详情:"+entry.getKey());
         }
     }
 

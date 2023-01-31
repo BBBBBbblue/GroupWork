@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @Data
 @AllArgsConstructor
@@ -27,6 +29,7 @@ public class User implements Serializable {
     private boolean status;
     private Timestamp gmtCreate;
     private Timestamp gmtModified;
+    private HashMap<String,Integer> addr;
     private static final long serialVersionUID = 1L;
 
 }
