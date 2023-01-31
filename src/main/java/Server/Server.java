@@ -21,7 +21,8 @@ import java.util.Iterator;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-/**
+
+/** 商城服务端
  * @author blue
  * @date 2023/1/14 20:46
  **/
@@ -33,29 +34,30 @@ public class Server {
     private ServerSocketChannel serverSocketChannel;
     private Selector selector;
     private static ArrayList<User> list = new ArrayList<>();
-    public Server init(){
+
+    private Server init() {
         try {
             serverSocketChannel = ServerSocketChannel.open();
             selector = Selector.open();
-            serverSocketChannel.bind(new InetSocketAddress(IP,PORT));
+            serverSocketChannel.bind(new InetSocketAddress(IP, PORT));
             serverSocketChannel.configureBlocking(false);
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
-            userDAO.init();;
-        }catch (IOException e){
+            userDAO.init();
+        } catch (IOException e) {
             System.out.println("初始化失败");
         }
         return this;
     }
 
-    public void userConnect() throws Exception{
+    private void userConnect() throws Exception {
         SocketChannel socketChannel = serverSocketChannel.accept();
         socketChannel.configureBlocking(false);
-        socketChannel.register(selector,SelectionKey.OP_READ);
+        socketChannel.register(selector, SelectionKey.OP_READ);
         String msg = "欢迎来到小鸭子商城";
-        response(msg,socketChannel);
-
+        response(msg, socketChannel);
     }
-    public void response(String msg,SocketChannel channel){
+
+    public void response(String msg, SocketChannel channel) {
         ByteBuffer buffer = ByteBuffer.wrap(msg.getBytes());
         try {
             channel.write(buffer);
@@ -64,70 +66,70 @@ public class Server {
         }
         buffer.clear();
     }
-    public void analysis(SelectionKey key){
-        SocketChannel channel = (SocketChannel)key.channel();
+
+    private void analysis(SelectionKey key) {
+        SocketChannel channel = (SocketChannel) key.channel();
         ByteBuffer buffer = ByteBuffer.allocate(2048);
         String str = null;
-        try{
+        try {
             str = channel.getLocalAddress().toString();
             int len = channel.read(buffer);
-            if (len == -1){
+            if (len == -1) {
                 throw new IOException();
             }
-            String userMsg = new String(buffer.array(),0,len);
+            String userMsg = new String(buffer.array(), 0, len);
             String analysisMsg = null;
             if (userMsg.length() > 4) {
-                 analysisMsg = userMsg.substring(0, 4);
+                analysisMsg = userMsg.substring(0, 4);
                 userMsg = userMsg.substring(4);
-            }
-            else {
-                 analysisMsg = userMsg;
+            } else {
+                analysisMsg = userMsg;
             }
             buffer.clear();
-            switch (analysisMsg){
+            switch (analysisMsg) {
                 case "智能客服":
-                    response("智能客服坤坤，为您服务",channel);
-                    ReplyThread thread = new ReplyThread(userMsg,channel,buffer,serverDAO,this);
+                    response("智能客服坤坤，为您服务", channel);
+                    ReplyThread thread = new ReplyThread(userMsg, channel, buffer, serverDAO, this);
                     thread.start();
-                break;
+                    break;
                 case "用户登录":
-                    LoginThread loginThread = new LoginThread(userMsg,channel,buffer,userDAO,this);
-                    loginThread.run();
-                break;
+                    new LoginThread(userMsg, channel, buffer, userDAO, this).run();
+                    break;
                 case "用户注册":
-                    RegisterThread registerThread = new RegisterThread(userMsg,channel,buffer,userDAO,this);
-                    registerThread.run();
+                    new RegisterThread(userMsg, channel, buffer, userDAO, this).run();
                     break;
                 case "修改资料":
-                    UpdateThread updateThread = new UpdateThread(userMsg,channel,buffer,userDAO,this);
-                    updateThread.start();
+                    new UpdateThread(userMsg, channel, buffer, userDAO, this).run();
                     break;
-                case"用户充值":
-                    ChargeThread chargeThread = new ChargeThread(userMsg,channel,buffer,userDAO,this);
-                    chargeThread.run();
+                case "用户充值":
+                    new ChargeThread(userMsg, channel, buffer, userDAO, this).run();
                     break;
-                case"用户结账":
-                    PayThread payThread = new PayThread(userMsg,channel,buffer,userDAO,this);
-                    payThread.run();
-                case"查看商品":
-                    SendProductThread sendProductThread = new SendProductThread(userMsg,channel,buffer,userDAO,this);
-                    sendProductThread.run();
+                case "用户结账":
+                    new PayThread(userMsg, channel, buffer, userDAO, this).run();
+                case "查看商品":
+                    new SendProductThread(userMsg, channel, buffer, userDAO, this).run();
                     break;
-                case"看购物车":
+                case "看购物车":
                     int i = Integer.parseInt(userMsg);
-                    SendCartsThread sendCartsThread = new SendCartsThread(i,channel,buffer,userDAO,this);
-                    sendCartsThread.run();
+                    new SendCartsThread(i, channel, buffer, userDAO, this).run();
                     break;
-                case"改购物车":
-                    new ChangeCartsDetailNumberThread(userMsg,channel,buffer,userDAO,this).run();
+                case "改购物车":
+                    new ChangeCartsDetailNumberThread(userMsg, channel, buffer, userDAO, this).run();
                     break;
                 case "删购物车":
-                    new RemoveCartsDetailThread(userMsg,channel,buffer,userDAO,this).run();
+                    new RemoveCartsDetailThread(userMsg, channel, buffer, userDAO, this).run();
                     break;
-                default:break;
+                case "修改地址":
+                    new UpdateAddrThread(userMsg,channel,buffer,userDAO,this).run();
+                    break;
+                case "添加地址":
+                    new AddAddrThread(userMsg,channel,buffer,userDAO,this).run();
+                    break;
+                default:
+                    break;
             }
-        }catch (IOException e){
-            System.out.println(str+":断开连接，本次服务取消");
+        } catch (IOException e) {
+            System.out.println(str + ":断开连接，本次服务取消");
             key.cancel();
             try {
                 channel.socket().close();
@@ -138,13 +140,7 @@ public class Server {
         }
     }
 
-
-    public void userSendMsg(SelectionKey key){
-        SocketChannel channel = (SocketChannel) key.channel();
-        ByteBuffer buffer = ByteBuffer.allocate(1024);
-        String str = null;
-    }
-    public void start(){
+    private void start() {
 
         while (true) {
             try {
@@ -162,7 +158,7 @@ public class Server {
                         System.out.println("已断开与客户连接");
                     }
                 }
-                if (key.isReadable()){
+                if (key.isReadable()) {
                     analysis(key);
                 }
                 iterator.remove();

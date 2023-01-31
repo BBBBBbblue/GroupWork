@@ -34,11 +34,30 @@ public class FunctionController {
                 new ShopView(client,buffer).shopView();
                 break;
             case 3:
-                new UserView(client,buffer).updateView();
+                new FunctionView(client,buffer).updateView();
                 break;
             case 4:
                 new UserView(client,buffer).chargeView();
                 break;
+        }
+    }
+
+    public void updateChoose(int i){
+        switch (i){
+            case 1:
+                new UserView(client,buffer).updateView();
+                break;
+            case 2:
+                new UserView(client,buffer).updateAddr();
+                break;
+            case 3:
+                new UserView(client,buffer).addAddr();
+            case 4:
+                new FunctionView(client,buffer).functionView();
+                break;
+            default:
+                break;
+
         }
     }
 }

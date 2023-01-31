@@ -69,4 +69,18 @@ public interface UserDAO {
      */
      String removeCartDetail(int id);
 
+    /** 用户修改地址方法
+     * @param id 地址主键id
+     * @param newAddr 修改后地址信息
+     * @return 字符串表明修改状态
+     */
+     String updateAddr(int id,String newAddr);
+
+    /** 用户增加地址方法
+     * @param detail 增加收货地址
+     * @param userId 用户id
+     * @return 字符串表明增加状态
+     */
+     String addAddr(String detail,int userId);
+
 }

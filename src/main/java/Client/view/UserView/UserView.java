@@ -12,6 +12,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.nio.ByteBuffer;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Scanner;
 
 @Data
@@ -51,8 +53,6 @@ public class UserView {
     }
 
     public void registerView() {
-//        UserReadThread urd = new UserReadThread(buffer,client);
-//        urd.start();
         System.out.println("请输入不超过10位用户名");
         String account = scanner.nextLine();
         while (account.length() > 10 || account.contains("~") || account.contains("@")) {
@@ -106,6 +106,37 @@ public class UserView {
         new FunctionView(client, buffer).functionView();
     }
 
+    public void updateAddr(){
+        client.addrList();
+        System.out.println("============================");
+        System.out.println("请输入修改地址详情编号");
+        int id = scanner.nextInt();
+        System.out.println("输入修改后详细地址");
+        scanner.nextLine();
+        String newAddr = scanner.nextLine();
+        client.sendMsg("修改地址"+id+"~"+newAddr);
+        for (Iterator<Map.Entry<String, Integer>> iterator = client.getUser().getAddr().entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry<String,Integer> entry = iterator.next();
+            if (entry.getValue() == id){
+                iterator.remove();
+                break;
+            }
+        }
+        client.getUser().getAddr().put(newAddr,id);
+        System.out.println(client.readMsg(buffer));
+        new FunctionView(client,buffer).updateView();
+    }
 
+    public void addAddr(){
+        System.out.println("输入地址信息");
+        String addr = scanner.nextLine();
+        client.sendMsg("添加地址"+client.getUser().getId()+'~'+addr);
+        String msg = client.readMsg(buffer);
+        String reMsg = msg.substring(0,4);
+        System.out.println(reMsg);
+        int id = Integer.parseInt(msg.substring(4));
+        client.getUser().getAddr().put(addr,id);
+        new FunctionView(client,buffer).updateView();
+    }
 
 }
