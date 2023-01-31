@@ -87,6 +87,35 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
+    public Order selectOrderById(int orderId) {
+        Order order = null;
+        String sql = "select * from orders where id = ?";
+        try(
+                Connection conn = Connect.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+        ){
+            pstmt.setInt(1,orderId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()){
+                order = new Order();
+                order.setId(rs.getInt(1));
+                order.setUserId(rs.getInt(2));
+                order.setOrderCode(rs.getString(3));
+                order.setReceiveAddr(rs.getString(4));
+                order.setReceiveName(rs.getString(5));
+                order.setTelPhone(rs.getInt(6));
+                order.setPrice(rs.getDouble(7));
+                order.setStatus(rs.getInt(8));
+                order.setGmtCreate(rs.getTimestamp(9));
+                order.setGmtModified(rs.getTimestamp(10));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return order;
+    }
+
+    @Override
     public List<OrderDetail> selectOrderDetailByOrderId(int orderId) {
         List<OrderDetail> orderDetails = new ArrayList<>();
         String sql = "select * from orders where orders_id = ?";
@@ -113,15 +142,17 @@ public class OrderDaoImpl implements OrderDao {
     }
 
     @Override
-    public void updateOrderStatus(int orderId, int status) {
-        String sql = "update orders set status = ?,gmt_modified = ? where id = ?";
+    public void updateOrder(Order order) {
+        String sql = "update orders set receive_addr = ?,receive_name = ?,status = ?,gmt_modified = ? where id = ?";
         try(
                 Connection conn =Connect.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql);
         ){
-            pstmt.setInt(1,status);
-            pstmt.setTimestamp(2,new Timestamp(System.currentTimeMillis()));
-            pstmt.setInt(3, orderId);
+            pstmt.setString(1,order.getReceiveAddr());
+            pstmt.setString(2,order.getReceiveName());
+            pstmt.setInt(3,order.getStatus());
+            pstmt.setTimestamp(4,new Timestamp(System.currentTimeMillis()));
+            pstmt.setInt(5,order.getId());
             pstmt.execute();
         } catch (SQLException e) {
             e.printStackTrace();

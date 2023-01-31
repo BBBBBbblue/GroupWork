@@ -30,6 +30,7 @@ public class Client {
     private static Scanner scanner = new Scanner(System.in);
     private User user;
     public HashMap<String,Object> hh;
+    public HashMap<Integer,Product> idToProduct;
     private HashMap<Product,Integer> products;
     private HashMap<String,LinkedList<CartsDetail>> carts;
     private ArrayList<CartsDetail> updateCartsDetail;
@@ -82,6 +83,12 @@ public class Client {
             if (count / 3 > (i-1)){
                 break;
             }
+        }
+        for (Iterator<Map.Entry<Product,Integer>> iterator = maps.entrySet().iterator();iterator.hasNext();)
+        {
+            Map.Entry<Product, Integer> entry = iterator.next();
+            Product tem = entry.getKey();
+            idToProduct.put(new Integer(tem.getId()),tem);
         }
         System.out.println();
         System.out.print("\t"+"页数"+i+"/"+(int)Math.ceil(maps.size()/3)+"\t"+"跳转到第__页"+"\t");

@@ -32,6 +32,13 @@ public interface OrderDao {
     List<Order> selectOrderByUserId(int userId,int status);
 
     /**
+     * 根据订单id获得订单实体类
+     * @param orderId 订单id
+     * @return
+     */
+    Order selectOrderById(int orderId);
+
+    /**
      * 查询订单详情
      * @param orderId 订单id
      * @return 查出的订单详情实体类集合
@@ -39,10 +46,9 @@ public interface OrderDao {
     List<OrderDetail> selectOrderDetailByOrderId(int orderId);
 
     /**
-     * 更新订单状态
-     * @param orderId 被更新的订单id
-     * @param status 变更的状态
+     * 变更订单信息
+     * @param order 需要修改的订单实体类
      */
-    void updateOrderStatus(int orderId,int status);
+    void updateOrder(Order order);
 
 }

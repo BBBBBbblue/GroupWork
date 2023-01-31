@@ -2,6 +2,7 @@ package Client.view.MainView;
 
 import Client.Client;
 import Client.controll.CartsController;
+import Client.controll.OrderController;
 import Client.controll.ShopController;
 import Client.util.comparator.ProductPriceComp;
 import Server.pojo.Product;
@@ -27,7 +28,7 @@ public class ShopView {
 
     public void shopView(){
         System.out.println("==========================================================");
-        System.out.println("1,查看商品 2,查看购物车 3,返回 ");
+        System.out.println("1,查看商品 2,查看购物车 3,查看订单 4,返回 ");
         new ShopController(client,buffer).shopChoose(scanner.nextInt());
     }
 
@@ -71,5 +72,13 @@ public class ShopView {
         }
         System.out.println("1,修改数量 2.移除商品 3.添加订单 4.返回");
         new CartsController(client,buffer).cartsListChoose(scanner.nextInt());
+    }
+
+    public void orderView(){
+        System.out.println("1,查看全部订单 2，查看进行中订单 3，查看待评价订单 4，查看已完成订单 5，查看已完成订单 6,返回");
+        Integer tem = new Integer(scanner.nextInt());
+        client.hh.put("key",tem);
+        client.hh.put("pageNum",new Integer(1));
+        new OrderController(client,buffer).showOrderList();
     }
 }

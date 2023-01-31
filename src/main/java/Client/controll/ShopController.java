@@ -29,7 +29,9 @@ public class ShopController {
                 break;
             case 2:new ShopView(client,buffer).cartsView();
                 break;
-            case 3:new FunctionView(client,buffer).functionView();
+            case 3:new ShopView(client,buffer).orderView();
+            break;
+            case 4:new FunctionView(client,buffer).functionView();
             default:break;
         }
     }
