@@ -8,16 +8,20 @@ import lombok.NoArgsConstructor;
 import Server.pojo.User;
 import Server.util.Connect;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.sql.*;
 import java.util.*;
 
 @Data
 @NoArgsConstructor
+
 /**
  * @author blue
  * @date 2023/1/12 14:35
  **/
+
 public class UserDAOImpl implements UserDAO {
     private static Scanner scanner = new Scanner(System.in);
     private List<String> accountList = new ArrayList<>();
@@ -229,7 +233,7 @@ public class UserDAOImpl implements UserDAO {
                 ps.execute();
                 userMap.put(account, balance);
                 System.out.println(userMap.entrySet());
-                return new String("消费成功");
+                return new String("消费成功"+money);
             } catch (SQLException e) {
                 return new String("未知错误");
             }
@@ -344,6 +348,90 @@ public class UserDAOImpl implements UserDAO {
         }catch (SQLException e){
             resMsg = "添加失败";
             return resMsg;
+        }
+    }
+
+    @Override
+    public float priceCount(int id) {
+        String sql = "SELECT product_name,product_id,number,price,inventory,b.status FROM" +
+                "(SELECT * FROM carts_detail WHERE id = ?) AS a , product AS b WHERE " +
+                "a.product_id = b.id";
+        int count = 0;
+        try(    Connection connection = Connect.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ){
+            ps.setInt(1,id);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            if (rs.getInt("status") == 2){
+                channel.write(ByteBuffer.wrap((rs.getString("product_name")+"商品已下架").getBytes()));
+                return 0;
+            }
+            if (rs.getInt("number") > rs.getInt("inventory")){
+                channel.write((ByteBuffer.wrap((rs.getString("product_name")+"已经卖完了,购买失败").getBytes())));
+                return 0;
+            }
+            float price = rs.getFloat("price");
+            int number = rs.getInt("number");
+            return (price * number);
+        }catch (SQLException | IOException e){
+            e.printStackTrace();
+            return 0;
+        }
+
+    }
+
+    @Override
+    public String addOrder(int id, String addr, String name, String telephone,float price) {
+        String sql = "insert into orders(user_id,receive_addr,receive_name,telephone,price,ordercode) values (?,?,?,?,?,?)";
+        int orderId;
+        try(    Connection connection = Connect.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
+                ){
+            ps.setInt(1,id);
+            ps.setString(2,addr);
+            ps.setString(3,name);
+            ps.setString(4,telephone);
+            ps.setFloat(5,price);
+            ps.setString(6,"AAAAAAAAA");
+            // TODO: 2023/1/31 订单编号自动生成
+            ps.executeUpdate();
+            ResultSet rs = ps.getGeneratedKeys();
+            rs.next();
+            orderId = rs.getInt(1);
+            return new String(orderId+"~"+"订单编号");
+
+        }catch (SQLException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public String cartsAddOrderDetail(int orderId, int cartDetailsId) {
+        String sql = "select * from carts_detail where id = ?";
+        String sqq = "insert into orders_detail (product_id,orders_id,number) values (?,?,?) ";
+        try{ Connection connection = Connect.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1,cartDetailsId);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            int productId = rs.getInt("product_id");
+            int number = rs.getInt("number");
+            Connection con = Connect.getConnection();
+            PreparedStatement pss = con.prepareStatement(sqq);
+            pss.setInt(1,productId);
+            pss.setInt(2,orderId);
+            pss.setInt(3,number);
+            pss.execute();
+            pss.close();
+            con.close();
+            ps.close();
+            connection.close();
+            return "成功生成";
+        }catch (SQLException e){
+            e.printStackTrace();
+            return null;
         }
     }
 }

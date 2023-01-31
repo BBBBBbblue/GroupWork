@@ -83,4 +83,26 @@ public interface UserDAO {
      */
      String addAddr(String detail,int userId);
 
+    /** 计算价格方法
+     * @param id 购物车详情id
+     * @return 计算完后价格
+     */
+     float priceCount(int id);
+
+    /** 增加订单方法
+     * @param id 用户id
+     * @param addr 地址
+     * @param name 收件人
+     * @param telephone 电话
+     * @return 订单增加状态
+     */
+     String addOrder(int id ,String addr,String name,String telephone,float price);
+
+    /** 增加订单详情
+     * @param orderId 订单号
+     * @param cartDetailsId 购物车详情id
+     * @return 状态
+     */
+     String cartsAddOrderDetail(int orderId,int cartDetailsId);
+
 }

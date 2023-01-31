@@ -125,6 +125,8 @@ public class Server {
                 case "添加地址":
                     new AddAddrThread(userMsg,channel,buffer,userDAO,this).run();
                     break;
+                case "订单车车":
+                    new CartsAddOrderThread(userMsg,channel,buffer,userDAO,this).run();
                 default:
                     break;
             }
