@@ -158,4 +158,21 @@ public class OrderDaoImpl implements OrderDao {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void minusProductInventory(int productId,int number) {
+        String sql = "update product set sellCount = sellCount + ?,inventory = inventory - ?,gmt_modified = ? where id = ?";
+        try(
+                Connection conn =Connect.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+        ){
+            pstmt.setInt(1,number);
+            pstmt.setInt(2,number);
+            pstmt.setTimestamp(3,new Timestamp(System.currentTimeMillis()));
+            pstmt.setInt(4,productId);
+            pstmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

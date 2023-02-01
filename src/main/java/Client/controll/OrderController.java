@@ -1,7 +1,6 @@
 package Client.controll;
 
 import Client.Client;
-import Client.Service.OrderService;
 import Client.Service.impl.OrderServiceImpl;
 import Client.view.MainView.OrderView;
 import Client.view.MainView.ShopView;
@@ -10,7 +9,9 @@ import Server.pojo.OrderDetail;
 import Server.pojo.User;
 
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -119,7 +120,7 @@ public class OrderController {
                 new OrderView(client,buffer).afterSale();
                 break;
             case 4:
-                this.showOrderList();
+                new OrderController(client,buffer).showOrderList();
                 break;
             default:break;
         }
@@ -129,6 +130,39 @@ public class OrderController {
         Order order = (Order)client.hh.get("order");
         orderService.updateOrder(order);
         System.out.println("修改订单成功");
-        this.showOrderList();
+        new OrderController(client,buffer).showOrderList();
+    }
+
+    public void createOrder(){
+        Order order = (Order)client.hh.get("order");
+        OrderDetail orderDetail = (OrderDetail)client.hh.get("orderDetail");
+        User user = client.getUser();
+        order.setUserId(user.getId());
+        int tel = Integer.parseInt(user.getTelephone());
+        order.setTelPhone(tel);
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date date = new Date();
+        String orderCode = format.format(date);
+        order.setOrderCode(orderCode);
+        List<OrderDetail> orderDetails = new ArrayList<>();
+        orderDetails.add(orderDetail);
+        orderService.createOrder(order,orderDetails);
+        System.out.println("创建订单成功");
+        new ShopView(client,buffer).shopView();
+    }
+
+    public void createCartOrder(){
+        Order order = (Order)client.hh.get("order");
+        User user = client.getUser();
+        order.setUserId(user.getId());
+        int tel = Integer.parseInt(user.getTelephone());
+        order.setTelPhone(tel);
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
+        Date date = new Date();
+        String orderCode = format.format(date);
+        order.setOrderCode(orderCode);
+        orderService.createCartOrder(user,order,client.idToProduct);
+        System.out.println("创建订单成功");
+        new ShopView(client,buffer).shopView();
     }
 }

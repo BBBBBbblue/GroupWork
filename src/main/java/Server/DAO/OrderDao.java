@@ -51,4 +51,10 @@ public interface OrderDao {
      */
     void updateOrder(Order order);
 
+    /**
+     * 减少商品库存
+     * @param productId
+     * @param number
+     */
+    void minusProductInventory(int productId,int number);
 }

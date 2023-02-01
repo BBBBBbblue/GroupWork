@@ -51,6 +51,7 @@ public class ShopController {
                 new ShopView(client,buffer).productsView(comp2);
                 break;
             case 4:
+                new OrderView(client,buffer).createOrder();
                 break;
             case 5:
                 break;

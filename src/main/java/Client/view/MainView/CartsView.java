@@ -1,7 +1,9 @@
 package Client.view.MainView;
 
 import Client.Client;
+import Client.controll.OrderController;
 import Server.pojo.CartsDetail;
+import Server.pojo.Order;
 
 import java.nio.ByteBuffer;
 import java.util.Iterator;
@@ -60,6 +62,14 @@ public class CartsView {
     }
 
     public void addOrder(){
-
+        Order order = new Order();
+        System.out.println("输入收件人姓名");
+        String name = scanner.nextLine();
+        System.out.println("输入收件地址");
+        String addr = scanner.nextLine();
+        order.setReceiveName(name);
+        order.setReceiveAddr(addr);
+        client.hh.put("order",order);
+        new OrderController(client,buffer).createCartOrder();
     }
 }
