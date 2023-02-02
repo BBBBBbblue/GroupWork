@@ -105,4 +105,32 @@ public interface UserDAO {
      */
      String cartsAddOrderDetail(int orderId,int cartDetailsId);
 
+    /** 单个商品计算总价方法
+     * @param id 商品id
+     * @param number 商品数量
+     * @return 总价
+     */
+     float countPrice(int id,int number);
+
+    /** 单个商品订单详情添加方法
+     * @param orderId  订单号
+     * @param productId 商品号
+     * @param number 数量
+     */
+     void shopAddOrderDetail(int orderId,int productId,int number);
+
+    /** 更改商品销量库存
+     * @param productId  商品id
+     * @param number 数量
+     */
+     void updateProduct(int productId, int number);
+
+    /** 增加订单详情方法
+     * @param productId  商品id
+     * @param number 数量
+     * @param id 用户id
+     * @return 信息
+     */
+     String addCartsDetail(int productId,int number,int id);
+
 }

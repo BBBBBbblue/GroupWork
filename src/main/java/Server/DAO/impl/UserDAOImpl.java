@@ -233,7 +233,7 @@ public class UserDAOImpl implements UserDAO {
                 ps.execute();
                 userMap.put(account, balance);
                 System.out.println(userMap.entrySet());
-                return new String("消费成功"+money);
+                return new String("消费成功" + money);
             } catch (SQLException e) {
                 return new String("未知错误");
             }
@@ -332,20 +332,20 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public String addAddr(String detail,int userId) {
+    public String addAddr(String detail, int userId) {
         String sql = "insert into addr (detail,user_id) values (?,?) ";
-        try(    Connection connection = Connect.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
-                ){
-            ps.setString(1,detail);
-            ps.setInt(2,userId);
+        try (Connection connection = Connect.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ) {
+            ps.setString(1, detail);
+            ps.setInt(2, userId);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
             int id = rs.getInt(1);
-            resMsg = "添加成功"+id;
+            resMsg = "添加成功" + id;
             return resMsg;
-        }catch (SQLException e){
+        } catch (SQLException e) {
             resMsg = "添加失败";
             return resMsg;
         }
@@ -357,24 +357,24 @@ public class UserDAOImpl implements UserDAO {
                 "(SELECT * FROM carts_detail WHERE id = ?) AS a , product AS b WHERE " +
                 "a.product_id = b.id";
         int count = 0;
-        try(    Connection connection = Connect.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql);
-                ){
-            ps.setInt(1,id);
+        try (Connection connection = Connect.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+        ) {
+            ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             rs.next();
-            if (rs.getInt("status") == 2){
-                channel.write(ByteBuffer.wrap((rs.getString("product_name")+"商品已下架").getBytes()));
+            if (rs.getInt("status") == 2) {
+                channel.write(ByteBuffer.wrap((rs.getString("product_name") + "商品已下架").getBytes()));
                 return 0;
             }
-            if (rs.getInt("number") > rs.getInt("inventory")){
-                channel.write((ByteBuffer.wrap((rs.getString("product_name")+"已经卖完了,购买失败").getBytes())));
+            if (rs.getInt("number") > rs.getInt("inventory")) {
+                channel.write((ByteBuffer.wrap((rs.getString("product_name") + "已经卖完了,购买失败").getBytes())));
                 return 0;
             }
             float price = rs.getFloat("price");
             int number = rs.getInt("number");
             return (price * number);
-        }catch (SQLException | IOException e){
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
             return 0;
         }
@@ -382,26 +382,26 @@ public class UserDAOImpl implements UserDAO {
     }
 
     @Override
-    public String addOrder(int id, String addr, String name, String telephone,float price) {
+    public String addOrder(int id, String addr, String name, String telephone, float price) {
         String sql = "insert into orders(user_id,receive_addr,receive_name,telephone,price,ordercode) values (?,?,?,?,?,?)";
         int orderId;
-        try(    Connection connection = Connect.getConnection();
-                PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
-                ){
-            ps.setInt(1,id);
-            ps.setString(2,addr);
-            ps.setString(3,name);
-            ps.setString(4,telephone);
-            ps.setFloat(5,price);
-            ps.setString(6,"AAAAAAAAA");
+        try (Connection connection = Connect.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ) {
+            ps.setInt(1, id);
+            ps.setString(2, addr);
+            ps.setString(3, name);
+            ps.setString(4, telephone);
+            ps.setFloat(5, price);
+            ps.setString(6, "AAAAAAAAA");
             // TODO: 2023/1/31 订单编号自动生成
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
             orderId = rs.getInt(1);
-            return new String(orderId+"~"+"订单编号");
+            return new String(orderId + "~" + "订单编号");
 
-        }catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }
@@ -411,25 +411,119 @@ public class UserDAOImpl implements UserDAO {
     public String cartsAddOrderDetail(int orderId, int cartDetailsId) {
         String sql = "select * from carts_detail where id = ?";
         String sqq = "insert into orders_detail (product_id,orders_id,number) values (?,?,?) ";
-        try{ Connection connection = Connect.getConnection();
+        try {
+            Connection connection = Connect.getConnection();
             PreparedStatement ps = connection.prepareStatement(sql);
-            ps.setInt(1,cartDetailsId);
+            ps.setInt(1, cartDetailsId);
             ResultSet rs = ps.executeQuery();
             rs.next();
             int productId = rs.getInt("product_id");
             int number = rs.getInt("number");
             Connection con = Connect.getConnection();
             PreparedStatement pss = con.prepareStatement(sqq);
-            pss.setInt(1,productId);
-            pss.setInt(2,orderId);
-            pss.setInt(3,number);
+            pss.setInt(1, productId);
+            pss.setInt(2, orderId);
+            pss.setInt(3, number);
             pss.execute();
             pss.close();
             con.close();
             ps.close();
             connection.close();
+            updateProduct(productId, number);
             return "成功生成";
-        }catch (SQLException e){
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public float countPrice(int id, int number) {
+        String sql = "select * from product where id = ?";
+        try (Connection connection = Connect.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+        ) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            float price = rs.getFloat("price");
+            int inventory = rs.getInt("inventory");
+            if (number > inventory) {
+                return -1;
+            }
+            return price * number;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    @Override
+    public void shopAddOrderDetail(int orderId, int productId, int number) {
+        String sql = "insert into orders_detail (product_id,orders_id,number) values (?,?,?) ";
+        try (Connection connection = Connect.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+        ) {
+            ps.setInt(1, productId);
+            ps.setInt(2, orderId);
+            ps.setInt(3, number);
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void updateProduct(int productId, int number) {
+        String sql = "select * from product where id = ?";
+        String sqq = "update product set sellCount = ?,inventory = ? where id = ?";
+        try {
+            Connection connection = Connect.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, productId);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            int sellCount = rs.getInt("sellCount") + number;
+            int inventory = rs.getInt("inventory") - number;
+            ps.close();
+            connection.close();
+
+            Connection connection1 = Connect.getConnection();
+            PreparedStatement pss = connection1.prepareStatement(sqq);
+            pss.setInt(1, sellCount);
+            pss.setInt(2, inventory);
+            pss.setInt(3, productId);
+            pss.execute();
+            pss.close();
+            connection1.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String addCartsDetail(int productId, int number, int id) {
+        String sql = "insert into carts_detail (product_id,number,carts_id) values (?,?,?)";
+        String sqq = "select * from Carts where user_id = ?";
+        try {
+            Connection connection = Connect.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sqq);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            int cartId = rs.getInt("id");
+            ps.close();
+            connection.close();
+            Connection connection1 = Connect.getConnection();
+            PreparedStatement pss = connection1.prepareStatement(sql);
+            pss.setInt(1,productId);
+            pss.setInt(2,number);
+            pss.setInt(3,cartId);
+            pss.execute();
+            pss.close();
+            connection1.close();
+            return "添加完成";
+        } catch (SQLException e) {
             e.printStackTrace();
             return null;
         }

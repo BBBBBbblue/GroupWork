@@ -127,6 +127,13 @@ public class Server {
                     break;
                 case "订单车车":
                     new CartsAddOrderThread(userMsg,channel,buffer,userDAO,this).run();
+                    break;
+                case "商城下单":
+                    new ShopAddOrderThread(userMsg,channel,buffer,userDAO,this).run();
+                    break;
+                case "加购物车":
+                    new AddCartsDetail(userMsg,channel,buffer,userDAO,this).run();
+                    break;
                 default:
                     break;
             }

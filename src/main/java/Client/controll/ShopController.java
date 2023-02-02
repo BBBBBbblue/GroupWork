@@ -49,10 +49,13 @@ public class ShopController {
                 new ShopView(client,buffer).productsView(comp2);
                 break;
             case 4:
+                new ShopView(client,buffer).addOrder();
                 break;
             case 5:
+                new ShopView(client,buffer).addCartsDetail();
                 break;
             case 6:new ShopView(client,buffer).shopView();
+            break;
             default:break;
         }
 

@@ -6,7 +6,11 @@ import Client.controll.ShopController;
 import Client.util.comparator.ProductPriceComp;
 import Server.pojo.Product;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -72,4 +76,75 @@ public class ShopView {
         System.out.println("1,修改数量 2.移除商品 3.添加订单 4.返回");
         new CartsController(client,buffer).cartsListChoose(scanner.nextInt());
     }
+
+
+    public void addOrder() {
+        System.out.println("==========================");
+        int i;int j;
+        System.out.println("输入商品id");
+        i = scanner.nextInt();
+        System.out.println("输入商品数量");
+        j = scanner.nextInt();
+        String addr = null;
+        String telephone;
+        String name;
+        if (client.getUser().getAddr().size() > 0) {
+            System.out.println("1,使用默认地址 2，新地址");
+            int choose = scanner.nextInt();
+            if (choose == 1) {
+                for (String s : client.getUser().getAddr().keySet()) {
+                    addr = s;
+                    break;
+                }
+                telephone = client.getUser().getTelephone();
+            } else {
+                scanner.nextLine();
+                System.out.println("请输入地址");
+                addr = scanner.nextLine();
+                System.out.println("输入手机号码");
+                telephone = scanner.nextLine();
+            }
+            scanner.nextLine();
+            System.out.println("输入收货人姓名");
+            name = scanner.nextLine();
+        } else {
+            scanner.nextLine();
+            System.out.println("请输入地址");
+            addr = scanner.nextLine();
+            System.out.println("输入手机号码");
+            telephone = scanner.nextLine();
+            System.out.println("输入收货人姓名");
+            name = scanner.nextLine();
+        }
+        client.sendMsg("商城下单" + client.getUser().getAccount() + '~' + client.getUser().getId() + '@' + addr + '#' + telephone + '!' + name+'$'+i+'%'+j);
+
+        String resMsg = client.readMsg(buffer);
+        if (!resMsg.equals("余额不足") && !resMsg.equals("商品库存不足，交易失败")) {
+            String analysis = resMsg.substring(0, resMsg.indexOf('~'));
+            System.out.println(analysis);
+            resMsg = resMsg.substring(resMsg.indexOf('~')+1);
+            float totalPrice = Float.parseFloat(resMsg);
+            System.out.println("消费金额为："+totalPrice);
+            client.getUser().setBalance(client.getUser().getBalance() - totalPrice);
+
+        }else{
+            System.out.println(resMsg);
+        }
+
+        System.out.println("当前账户余额"+client.getUser().getBalance());
+        new ShopView(client, buffer).shopView();
+    }
+
+    public void addCartsDetail(){
+        System.out.println("==========================");
+        int i;int j;
+        System.out.println("输入商品id");
+        i = scanner.nextInt();
+        System.out.println("输入商品数量");
+        j = scanner.nextInt();
+        client.sendMsg("加购物车"+i+'~'+j+'@'+client.getUser().getId());
+        System.out.println(client.readMsg(buffer));
+        new ShopView(client,buffer).shopView();
+    }
+
 }

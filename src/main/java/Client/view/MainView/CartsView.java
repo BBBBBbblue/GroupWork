@@ -126,11 +126,11 @@ public class CartsView {
             float totalPrice = Float.parseFloat(resMsg);
             System.out.println(totalPrice);
             client.getUser().setBalance(client.getUser().getBalance()-totalPrice);
-//            client.sendMsg("看购物车" + client.getUser().getId());
-//            client.readCarts(buffer);
         }
         System.out.println(client.readMsg(buffer));
         System.out.println(client.getUser().getBalance());
+        client.sendMsg("看购物车" + client.getUser().getId());
+        client.readCarts(buffer);
         new ShopView(client, buffer).shopView();
 
 
