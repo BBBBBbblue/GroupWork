@@ -2,6 +2,7 @@ package Server.DAO;
 
 import Server.pojo.Order;
 import Server.pojo.OrderDetail;
+import Server.pojo.Product;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public interface OrderDao {
     /**
      * 根据订单id获得订单实体类
      * @param orderId 订单id
-     * @return
+     * @return 订单实体类
      */
     Order selectOrderById(int orderId);
 
@@ -53,8 +54,14 @@ public interface OrderDao {
 
     /**
      * 减少商品库存
-     * @param productId
-     * @param number
+     * @param productId 变更库存的商品id
+     * @param number 变更的数量
      */
     void minusProductInventory(int productId,int number);
+
+    /**
+     * 获得全部商品
+     * @return 所有商品
+     */
+    List<Product> getProducts();
 }

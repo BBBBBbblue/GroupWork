@@ -1,5 +1,6 @@
 package Client;
 import Client.view.MainView.MainView;
+import Server.DAO.impl.OrderDaoImpl;
 import Server.pojo.CartsDetail;
 import Server.pojo.Product;
 import Server.pojo.User;
@@ -33,6 +34,14 @@ public class Client {
 
 
     public void init(){
+        hh = new HashMap<String,Object>();
+        idToProduct = new HashMap<Integer,Product>();
+        List<Product> productList = new OrderDaoImpl().getProducts();
+        for (Product tem:productList)
+        {
+            Integer id = new Integer(tem.getId());
+            idToProduct.put(id,tem);
+        }
         try {
             selector = Selector.open();
             InetSocketAddress address = new InetSocketAddress(IP,PORT);
@@ -80,12 +89,7 @@ public class Client {
                 break;
             }
         }
-        for (Iterator<Map.Entry<Product,Integer>> iterator = maps.entrySet().iterator();iterator.hasNext();)
-        {
-            Map.Entry<Product, Integer> entry = iterator.next();
-            Product tem = entry.getKey();
-            idToProduct.put(new Integer(tem.getId()),tem);
-        }
+
         System.out.println();
         System.out.print("\t"+"页数"+i+"/"+(int)Math.ceil(maps.size()/3)+"\t"+"跳转到第__页"+"\t");
 

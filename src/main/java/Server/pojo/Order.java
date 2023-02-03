@@ -19,7 +19,7 @@ public class Order {
     private String orderCode;
     private String receiveAddr;
     private String receiveName;
-    private int telPhone;
+    private long telPhone;
     private double price;
     private int status;
     private Timestamp gmtCreate;

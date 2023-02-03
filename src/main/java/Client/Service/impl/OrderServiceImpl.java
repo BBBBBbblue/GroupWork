@@ -69,6 +69,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDetail> orderDetails = new ArrayList<>();
         double price = 0;
         for (CartsDetail cartsDetail:cartsDetails) {
+            cartsDao.deleteCartsDetailById(cartsDetail.getId());
             OrderDetail orderDetail = new OrderDetail();
             int productId = cartsDetail.getProductId();
             orderDetail.setProductId(productId);

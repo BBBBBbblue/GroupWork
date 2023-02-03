@@ -43,10 +43,11 @@ public class OrderView {
         }
         double price = number * product.getPrice();
         System.out.println("输入收件人姓名");
+        scanner.nextLine();
         String name = scanner.nextLine();
+        order.setReceiveName(name);
         System.out.println("输入收件地址");
         String addr = scanner.nextLine();
-        order.setReceiveName(name);
         order.setReceiveAddr(addr);
         order.setPrice(price);
         orderDetail.setProductId(id);
@@ -54,7 +55,7 @@ public class OrderView {
         List<OrderDetail> orderDetails = new ArrayList<>();
         orderDetails.add(orderDetail);
         client.hh.put("order",order);
-        client.hh.put("orderDetails",orderDetails);
+        client.hh.put("orderDetail",orderDetail);
         new OrderController(client,buffer).createOrder();
     }
 
@@ -64,29 +65,35 @@ public class OrderView {
         int pageNum = tem.intValue();
         System.out.println("===================================");
         System.out.println("订单id 订单号 收件人 地址 联系电话 总价 下单日期");
-        for (int i = 3*(pageNum - 1); i < 3 * pageNum; i++) {
-            Order order = orders.get(i);
-            System.out.println(order.getId() + " " + order.getOrderCode() + " " + order.getReceiveName() + " " + order.getReceiveAddr()
-                    + " " + order.getTelPhone() + " " + order.getPrice() + " " + order.getGmtCreate());
-        }
-        int maxPage;
-        if(orders.size() % 3 == 0){
-            maxPage = orders.size()/3;
+        if(orders.size() > 0) {
+            for (int i = 3 * (pageNum - 1); i < 3 * pageNum; i++) {
+                if (i == orders.size()) break;
+                Order order = orders.get(i);
+                System.out.println(order.getId() + " " + order.getOrderCode() + " " + order.getReceiveName() + " " + order.getReceiveAddr()
+                        + " " + order.getTelPhone() + " " + order.getPrice() + " " + order.getGmtCreate());
+            }
+            int maxPage;
+            if (orders.size() % 3 == 0) {
+                maxPage = orders.size() / 3;
+            } else {
+                maxPage = orders.size() / 3 + 1;
+            }
+            if (pageNum > 1) {
+                System.out.print("1,上一页  ");
+            }
+            System.out.print("第" + pageNum + "页/总" + maxPage + "页");
+            if (pageNum < maxPage) {
+                System.out.print(" 2,下一页  ");
+            }
+            System.out.print("3，查看订单详情  ");
         }else {
-            maxPage = orders.size()/3 + 1;
+            System.out.println("无订单");
         }
-        if(pageNum > 1){
-            System.out.print("1,上一页  ");
-        }
-        System.out.print("第" + pageNum + "页/总" + maxPage + "页");
-        if(pageNum < maxPage){
-            System.out.print(" 2,下一页  ");
-        }
-        System.out.print("3，查看订单详情  ");
         System.out.println("4,返回");
         int orderKey = scanner.nextInt();
         client.hh.put("orderKey",new Integer(orderKey));
         new OrderController(client,buffer).orderController();
+
     }
 
     public void orderDetail(){
@@ -99,20 +106,22 @@ public class OrderView {
     public void showOrderDetails(){
         List<OrderDetail> orderDetails = (List<OrderDetail>) client.hh.get("orderDetails");
         System.out.println("商品名称  商品价格  购买数量");
-        for (OrderDetail orderDetail:orderDetails) {
-            Product tem = client.idToProduct.get(new Integer(orderDetail.getProductId()));
-            System.out.println(tem.getProductName() + "  " + tem.getPrice() + "  " + orderDetail.getNumber());
-        }
-        Integer tem = (Integer) client.hh.get("key");
-        int key = tem.intValue();
-        if(key == 1){
-            System.out.print("1,修改订单  ");
-        }
-        if(key == 2){
-            System.out.print("2，评价订单  ");
-        }
-        if(key == 3){
-            System.out.print("3,申请售后  ");
+        if(orderDetails.size() > 0) {
+            for (OrderDetail orderDetail : orderDetails) {
+                Product tem = client.idToProduct.get(new Integer(orderDetail.getProductId()));
+                System.out.println(tem.getProductName() + "  " + tem.getPrice() + "  " + orderDetail.getNumber());
+            }
+            Integer tem = (Integer) client.hh.get("key");
+            int key = tem.intValue();
+            if (key == 1) {
+                System.out.print("1,修改订单  ");
+            }
+            if (key == 2) {
+                System.out.print("2，评价订单  ");
+            }
+            if (key == 3) {
+                System.out.print("3,申请售后  ");
+            }
         }
         System.out.println("4,返回");
         int orderDetailKey = scanner.nextInt();

@@ -72,12 +72,12 @@ public class OrderController {
         int pageNum = tem.intValue();
         switch (detailKey){
             case 1:
-                pageNum++;
+                pageNum--;
                 client.hh.put("pageNum",new Integer(pageNum));
                 new OrderController(client,buffer).showOrderList();
                 break;
             case 2:
-                pageNum--;
+                pageNum++;
                 client.hh.put("pageNum",new Integer(pageNum));
                 new OrderController(client,buffer).showOrderList();
                 break;
@@ -138,7 +138,7 @@ public class OrderController {
         OrderDetail orderDetail = (OrderDetail)client.hh.get("orderDetail");
         User user = client.getUser();
         order.setUserId(user.getId());
-        int tel = Integer.parseInt(user.getTelephone());
+        long tel = Long.parseLong(user.getTelephone());
         order.setTelPhone(tel);
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         Date date = new Date();
@@ -155,7 +155,7 @@ public class OrderController {
         Order order = (Order)client.hh.get("order");
         User user = client.getUser();
         order.setUserId(user.getId());
-        int tel = Integer.parseInt(user.getTelephone());
+        long tel = Long.parseLong(user.getTelephone());
         order.setTelPhone(tel);
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
         Date date = new Date();

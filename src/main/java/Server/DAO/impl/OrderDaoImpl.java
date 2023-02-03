@@ -3,6 +3,7 @@ package Server.DAO.impl;
 import Server.DAO.OrderDao;
 import Server.pojo.Order;
 import Server.pojo.OrderDetail;
+import Server.pojo.Product;
 import Server.util.Connect;
 
 import java.sql.*;
@@ -26,7 +27,7 @@ public class OrderDaoImpl implements OrderDao {
             pstmt.setString(2,order.getOrderCode());
             pstmt.setString(3,order.getReceiveAddr());
             pstmt.setString(4,order.getReceiveName());
-            pstmt.setInt(5,order.getTelPhone());
+            pstmt.setLong(5,order.getTelPhone());
             pstmt.setDouble(6,order.getPrice());
             pstmt.execute();
             ResultSet rs = pstmt.getGeneratedKeys();
@@ -73,7 +74,7 @@ public class OrderDaoImpl implements OrderDao {
                 order.setOrderCode(rs.getString(3));
                 order.setReceiveAddr(rs.getString(4));
                 order.setReceiveName(rs.getString(5));
-                order.setTelPhone(rs.getInt(6));
+                order.setTelPhone(rs.getLong(6));
                 order.setPrice(rs.getDouble(7));
                 order.setStatus(rs.getInt(8));
                 order.setGmtCreate(rs.getTimestamp(9));
@@ -103,7 +104,7 @@ public class OrderDaoImpl implements OrderDao {
                 order.setOrderCode(rs.getString(3));
                 order.setReceiveAddr(rs.getString(4));
                 order.setReceiveName(rs.getString(5));
-                order.setTelPhone(rs.getInt(6));
+                order.setTelPhone(rs.getLong(6));
                 order.setPrice(rs.getDouble(7));
                 order.setStatus(rs.getInt(8));
                 order.setGmtCreate(rs.getTimestamp(9));
@@ -118,7 +119,7 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public List<OrderDetail> selectOrderDetailByOrderId(int orderId) {
         List<OrderDetail> orderDetails = new ArrayList<>();
-        String sql = "select * from orders where orders_id = ?";
+        String sql = "select * from orders_detail where orders_id = ?";
         try(
                 Connection conn = Connect.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -175,4 +176,31 @@ public class OrderDaoImpl implements OrderDao {
             e.printStackTrace();
         }
     }
-}
+
+    @Override
+    public List<Product> getProducts() {
+        String sql = "select * from product";
+        List<Product> products = new ArrayList<>();
+        try (Connection conn = Connect.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+        ) {
+            ResultSet resultSet = pstmt.executeQuery();
+            while (resultSet.next()) {
+                if (resultSet.getInt("status") == 1) {
+                    Product product = new Product();
+                    product.setId(resultSet.getInt("id"));
+                    product.setProductName(resultSet.getString("product_name"));
+                    product.setPrice(resultSet.getFloat("price"));
+                    product.setSellCount(resultSet.getInt("sellCount"));
+                    product.setInventory(resultSet.getInt("inventory"));
+                    product.setCategoriesId(resultSet.getInt("categories_id"));
+                    product.setMerchantId(resultSet.getInt("merchant_id"));
+                    products.add(product);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return products;
+    }
+    }
