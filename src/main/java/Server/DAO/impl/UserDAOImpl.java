@@ -2,6 +2,7 @@ package Server.DAO.impl;
 
 import Server.DAO.UserDAO;
 import Server.pojo.CartsDetail;
+import Server.pojo.OrderDetail;
 import Server.pojo.Product;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -516,9 +517,9 @@ public class UserDAOImpl implements UserDAO {
             connection.close();
             Connection connection1 = Connect.getConnection();
             PreparedStatement pss = connection1.prepareStatement(sql);
-            pss.setInt(1,productId);
-            pss.setInt(2,number);
-            pss.setInt(3,cartId);
+            pss.setInt(1, productId);
+            pss.setInt(2, number);
+            pss.setInt(3, cartId);
             pss.execute();
             pss.close();
             connection1.close();
@@ -526,6 +527,133 @@ public class UserDAOImpl implements UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    @Override
+    public ArrayList<Product> nameSearch(String name) {
+        String sql = "select * from product where product_name = ? and status = 1 ";
+        ArrayList<Product> list = new ArrayList<>();
+        System.out.println(name);
+        try (Connection connection = Connect.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+        ) {
+            ps.setString(1, name);
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                Product product = new Product();
+                product.setId(resultSet.getInt("id"));
+                product.setProductName(resultSet.getString("product_name"));
+                product.setPrice(resultSet.getFloat("price"));
+                product.setSellCount(resultSet.getInt("sellCount"));
+                product.setInventory(resultSet.getInt("inventory"));
+                product.setCategoriesId(resultSet.getInt("categories_id"));
+                product.setMerchantId(resultSet.getInt("merchant_id"));
+                list.add(product);
+            }
+            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return list;
+        }
+    }
+
+    @Override
+    public ArrayList<Product> cateSearch(String name) {
+        String sql = "SELECT * FROM product WHERE id IN(SELECT product_id FROM property_value WHERE `value` = ?)";
+
+        ArrayList<Product> list = new ArrayList<>();
+        try (Connection connection = Connect.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql);
+        ) {
+            ps.setString(1, name);
+            ResultSet resultSet = ps.executeQuery();
+            while (resultSet.next()) {
+                Product product = new Product();
+                product.setId(resultSet.getInt("id"));
+                product.setProductName(resultSet.getString("product_name"));
+                product.setPrice(resultSet.getFloat("price"));
+                product.setSellCount(resultSet.getInt("sellCount"));
+                product.setInventory(resultSet.getInt("inventory"));
+                product.setCategoriesId(resultSet.getInt("categories_id"));
+                product.setMerchantId(resultSet.getInt("merchant_id"));
+                list.add(product);
+            }
+            return list;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return list;
+        }
+    }
+
+    @Override
+    public String addAfterSale(int orderId, String useMsg) {
+        String sql = "SELECT * FROM product WHERE id IN ( select product_id FROM orders_detail WHERE orders_id = ?)";
+        String sqq = "insert into aftersale (orders_id,merchant_id,detail) values (?,?,?)";
+        String sll = "update orders set status = 4 where id = ?";
+        try {
+            Connection connection = Connect.getConnection();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setInt(1, orderId);
+            ResultSet resultSet = ps.executeQuery();
+            resultSet.next();
+            int merchantId = resultSet.getInt("merchant_id");
+            ps.close();
+            connection.close();
+            Connection connection1 = Connect.getConnection();
+            PreparedStatement pss = connection1.prepareStatement(sqq);
+            pss.setInt(1, orderId);
+            pss.setInt(2, merchantId);
+            pss.setString(3, useMsg);
+            pss.execute();
+            pss.close();
+            connection1.close();
+            Connection connection2 = Connect.getConnection();
+            PreparedStatement pps = connection2.prepareStatement(sll);
+            pps.setInt(1, orderId);
+            pps.execute();
+            pps.close();
+            connection2.close();
+            return "申请完成";
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public HashMap<Integer, ArrayList<OrderDetail>> orderList(int id) {
+        HashMap<Integer, ArrayList<OrderDetail>> list = new HashMap<>();
+        String sql = "SELECT m.id,m.status,m.product_id,n.product_name,m.number,m.price FROM " +
+                "(SELECT a.id,a.price,a.status,b.product_id,b.number FROM " +
+                "(SELECT * FROM orders WHERE user_id = ?) AS a,orders_detail AS b " +
+                "WHERE a.id = b.orders_id)AS m,product AS n WHERE m.product_id = n.id";
+        try (Connection connection = Connect.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)
+        ) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int key = rs.getInt("id");
+                OrderDetail orderDetail = new OrderDetail();
+                orderDetail.setNumber(rs.getInt("number"));
+                orderDetail.setPrice(rs.getInt("price"));
+                orderDetail.setProductId(rs.getInt("product_id"));
+                orderDetail.setProductName(rs.getString("product_name"));
+                orderDetail.setStatus(rs.getInt("status"));
+                if (list.get(key) == null) {
+                    ArrayList<OrderDetail> orderDetails = new ArrayList<>();
+                    orderDetails.add(orderDetail);
+                    list.put(key, orderDetails);
+                } else {
+                    list.get(key).add(orderDetail);
+                }
+            }
+            return list;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return list;
         }
     }
 }

@@ -4,6 +4,7 @@ import Client.Client;
 import Client.Service.UserService;
 import Client.Service.impl.UserServiceImpl;
 import Client.controll.FunctionController;
+import Client.view.UserView.UserView;
 
 import java.nio.ByteBuffer;
 import java.util.Scanner;
@@ -24,7 +25,7 @@ public class FunctionView {
 
     public void functionView(){
         System.out.println("==========================================");
-        System.out.println("1,智能客服 2,商城主页 3，修改用户资料 4,充值");
+        System.out.println("1,智能客服 2,商城主页 3，修改用户资料 4,充值 5,评价与售后");
         new FunctionController(client,buffer).functionChoose(scanner.nextInt());
     }
 
@@ -33,4 +34,6 @@ public class FunctionView {
         System.out.println("1,修改用户数据 2,修改收货地址 3,增加新地址 4,返回");
         new FunctionController(client,buffer).updateChoose(scanner.nextInt());
     }
+
+
 }

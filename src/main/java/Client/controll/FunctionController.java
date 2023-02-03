@@ -1,6 +1,7 @@
 package Client.controll;
 
 import Client.Client;
+import Client.Service.impl.UserServiceImpl;
 import Client.util.UserReadReply;
 import Client.util.UserReadThread;
 import Client.view.MainView.FunctionView;
@@ -39,6 +40,10 @@ public class FunctionController {
             case 4:
                 new UserView(client,buffer).chargeView();
                 break;
+            case 5:
+                new UserServiceImpl(client,buffer).searchOrders();
+                break;
+            default:break;
         }
     }
 
@@ -58,6 +63,17 @@ public class FunctionController {
             default:
                 break;
 
+        }
+    }
+
+    public void otherChoose(int i){
+        switch (i){
+            case 1:
+                new UserServiceImpl(client,buffer).addAfterSale();
+                break;
+            case 2:
+                break;
+            default:break;
         }
     }
 }

@@ -106,6 +106,7 @@ public class Server {
                     break;
                 case "用户结账":
                     new PayThread(userMsg, channel, buffer, userDAO, this).run();
+                    break;
                 case "查看商品":
                     new SendProductThread(userMsg, channel, buffer, userDAO, this).run();
                     break;
@@ -133,6 +134,18 @@ public class Server {
                     break;
                 case "加购物车":
                     new AddCartsDetail(userMsg,channel,buffer,userDAO,this).run();
+                    break;
+                case "名称查找":
+                    new NameSearchThread(userMsg,channel,buffer,userDAO,this).run();
+                    break;
+                case "分类查找":
+                    new PropertySearch(userMsg,channel,buffer,userDAO,this).run();
+                    break;
+                case "查看订单":
+                    new SendOrdersThread(userMsg,channel,buffer,userDAO,this).run();
+                    break;
+                case"添加售后":
+                    new AddAfterSaleThread(userMsg,channel,buffer,userDAO,this).run();
                     break;
                 default:
                     break;

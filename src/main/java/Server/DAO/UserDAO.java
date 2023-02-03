@@ -1,6 +1,8 @@
 package Server.DAO;
 
 import Server.pojo.CartsDetail;
+import Server.pojo.OrderDetail;
+import Server.pojo.Product;
 import Server.pojo.User;
 
 import java.util.ArrayList;
@@ -132,5 +134,36 @@ public interface UserDAO {
      * @return 信息
      */
      String addCartsDetail(int productId,int number,int id);
+
+    /** 商品名称查找
+     * @param name 品名
+     * @return 商品集合
+     */
+     ArrayList<Product> nameSearch(String name);
+
+    /** 商品属性查找
+     * @param name 属性名
+     * @return 商品集合
+     */
+     ArrayList<Product> cateSearch(String name);
+
+    /** 用户售后方法
+     * @param orderId 订单号
+     * @param useMsg 退单原因
+     * @return 生成状态
+     */
+     String addAfterSale(int orderId,String useMsg);
+
+    /** 查看订单方法
+     * @param id 用户id
+     * @return 返回订单集合
+     */
+     HashMap<Integer,ArrayList<OrderDetail>> orderList(int id);
+
+    /** 查看待评价订单
+     * @param id
+     * @return
+     */
+     ArrayList<Integer> noEvaluationOrder(int id);
 
 }

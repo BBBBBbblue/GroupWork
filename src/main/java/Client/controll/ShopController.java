@@ -18,45 +18,55 @@ public class ShopController {
     private Client client;
     private ByteBuffer buffer;
 
-    public ShopController(Client client, ByteBuffer buffer){
+    public ShopController(Client client, ByteBuffer buffer) {
         this.client = client;
         this.buffer = buffer;
     }
 
-    public void shopChoose(int i){
-        switch (i){
-            case 1:new ShopView(client,buffer).productsView();
+    public void shopChoose(int i) {
+        switch (i) {
+            case 1:
+                new ShopView(client, buffer).productsView();
                 break;
-            case 2:new ShopView(client,buffer).cartsView();
+            case 2:
+                new ShopView(client, buffer).cartsView();
                 break;
-            case 3:new FunctionView(client,buffer).functionView();
-            default:break;
+            case 3:
+                new ShopView(client,buffer).searchView();
+                break;
+            case 4:
+                new FunctionView(client, buffer).functionView();
+                break;
+            default:
+                break;
         }
     }
 
-    public void shopListChoose(int i){
-        switch (i){
+    public void shopListChoose(int i) {
+        switch (i) {
             case 1:
                 ProductPriceComp comp = new ProductPriceComp();
-                new ShopView(client,buffer).productsView(comp);
+                new ShopView(client, buffer).productsView(comp);
                 break;
             case 2:
                 ProductDePriceComp comp1 = new ProductDePriceComp();
-                new ShopView(client,buffer).productsView(comp1);
+                new ShopView(client, buffer).productsView(comp1);
                 break;
             case 3:
                 ProductDeSellComp comp2 = new ProductDeSellComp();
-                new ShopView(client,buffer).productsView(comp2);
+                new ShopView(client, buffer).productsView(comp2);
                 break;
             case 4:
-                new ShopView(client,buffer).addOrder();
+                new ShopView(client, buffer).addOrder();
                 break;
             case 5:
-                new ShopView(client,buffer).addCartsDetail();
+                new ShopView(client, buffer).addCartsDetail();
                 break;
-            case 6:new ShopView(client,buffer).shopView();
-            break;
-            default:break;
+            case 6:
+                new ShopView(client, buffer).shopView();
+                break;
+            default:
+                break;
         }
 
     }
