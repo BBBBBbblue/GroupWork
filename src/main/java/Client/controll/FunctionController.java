@@ -72,6 +72,7 @@ public class FunctionController {
                 new UserServiceImpl(client,buffer).addAfterSale();
                 break;
             case 2:
+                new UserServiceImpl(client,buffer).judgement();
                 break;
             default:break;
         }

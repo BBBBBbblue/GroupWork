@@ -161,9 +161,23 @@ public interface UserDAO {
      HashMap<Integer,ArrayList<OrderDetail>> orderList(int id);
 
     /** 查看待评价订单
-     * @param id
-     * @return
+     * @param id 用户id
+     * @return 待评价订单合集
      */
      ArrayList<Integer> noEvaluationOrder(int id);
+
+    /** 用户评价商品方法
+     * @param orderId 订单id
+     * @param msg 详细信息
+     * @param point 订单分数
+     * @param userId 用户id
+     * @return 修改情况
+     */
+     String judgement(int orderId,String msg,float point,int userId);
+
+    /** 将订单设置成完成状态
+     * @param id 订单id
+     */
+     void completeOrder(int id);
 
 }

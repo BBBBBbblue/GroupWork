@@ -147,6 +147,12 @@ public class Server {
                 case"添加售后":
                     new AddAfterSaleThread(userMsg,channel,buffer,userDAO,this).run();
                     break;
+                case "待评价单":
+                    new SendNoEvaluation(userMsg,channel,buffer,userDAO,this).run();
+                    break;
+                case "评价订单":
+                    new JudgementThread(userMsg,channel,buffer,userDAO,this).run();
+                    break;
                 default:
                     break;
             }

@@ -394,13 +394,13 @@ public class UserDAOImpl implements UserDAO {
             ps.setString(3, name);
             ps.setString(4, telephone);
             ps.setFloat(5, price);
-            ps.setString(6, "AAAAAAAAA");
-            // TODO: 2023/1/31 订单编号自动生成
+            String code = System.currentTimeMillis()+"";
+            ps.setString(6, code);
             ps.executeUpdate();
             ResultSet rs = ps.getGeneratedKeys();
             rs.next();
             orderId = rs.getInt(1);
-            return new String(orderId + "~" + "订单编号");
+            return new String(orderId + "~" + code);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -654,6 +654,71 @@ public class UserDAOImpl implements UserDAO {
         } catch (SQLException e) {
             e.printStackTrace();
             return list;
+        }
+    }
+
+    @Override
+    public ArrayList<Integer> noEvaluationOrder(int id) {
+        String sql = "select * from orders where user_id = ? and status = 2";
+        ArrayList<Integer> list = new ArrayList<>();
+        try(    Connection connection = Connect.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ){
+            ps.setInt(1,id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                list.add(rs.getInt("id"));
+            }
+            return list;
+        }catch (SQLException e){
+            e.printStackTrace();
+            return list;
+        }
+    }
+
+    @Override
+    public String judgement(int orderId, String msg,float point,int userId) {
+        String sql = "SELECT * FROM orders_detail WHERE orders_id = ?";
+        ArrayList<Integer> list = new ArrayList<>();
+        try(    Connection connection = Connect.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ){
+            ps.setInt(1,orderId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()){
+                list.add(rs.getInt("product_id"));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+            return null;
+        }
+        String sqq = "INSERT INTO judgement (User_id,product_id,points,detail) VALUES (?,?,?,?)";
+        for (Integer i : list) {
+            try(    Connection connection = Connect.getConnection();
+                    PreparedStatement pss = connection.prepareStatement(sqq);
+                    ){
+                pss.setInt(1,userId);
+                pss.setInt(2,i);
+                pss.setFloat(3,point);
+                pss.setString(4,msg);
+                pss.execute();
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+        return "评价完成";
+    }
+
+    @Override
+    public void completeOrder(int id) {
+        String sql = "update orders set status = 3 where id = ?";
+        try(    Connection connection = Connect.getConnection();
+                PreparedStatement ps = connection.prepareStatement(sql);
+                ){
+            ps.setInt(1,id);
+            ps.execute();
+        }catch (SQLException e){
+            e.printStackTrace();
         }
     }
 }
