@@ -49,7 +49,7 @@ public class SearchView {
             }
         }
         System.out.println();
-        System.out.print("\t" + "页数" + i + "/" + (int) Math.ceil(list.size() / 3) + "\t" + "跳转到第__页" + "\t");
+        System.out.print("\t" + "页数" + i + "/" + (int)Math.ceil((float)list.size() / 3) + "\t" + "跳转到第__页" + "\t");
         while ((j = scanner.nextInt()) != 0) {
             this.searchList(list, j);
         }
