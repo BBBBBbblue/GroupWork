@@ -29,7 +29,7 @@ public class ShopView {
     public void shopView() {
         System.out.println("==========================================================");
         System.out.println("1,查看商品 2,查看购物车 3，查找商品 4,返回 ");
-        new ShopController(client, buffer).shopChoose(scanner.nextInt());
+        new ShopController(client, buffer).shopChoose(Integer.parseInt(scanner.nextLine()));
     }
 
     public void productsView() {
@@ -40,11 +40,11 @@ public class ShopView {
         TreeMap<Product, Integer> treeMap = new TreeMap<>(comp);
         treeMap.putAll(client.getProducts());
         client.productList(treeMap, 1);
-        while ((j = scanner.nextInt()) != 0) {
+        while ((j = Integer.parseInt(scanner.nextLine())) != 0) {
             client.productList(treeMap, j);
         }
         System.out.println("1,价格升序 2，价格降序 3，销量降序 4,购买商品 5,添加购物车 6,返回");
-        new ShopController(client, buffer).shopListChoose(scanner.nextInt());
+        new ShopController(client, buffer).shopListChoose(Integer.parseInt(scanner.nextLine()));
         // TODO: 2023/1/24 功能继续完善
         // TODO: 2023/1/25 分类查找功能 ，可以写成查找功能，有待实现
         // TODO: 2023/1/25 线程加锁的问题可以开始思考
@@ -55,11 +55,11 @@ public class ShopView {
         TreeMap<Product, Integer> treeMap = new TreeMap<>(comp);
         treeMap.putAll(client.getProducts());
         client.productList(treeMap, 1);
-        while ((j = scanner.nextInt()) != 0) {
+        while ((j = Integer.parseInt(scanner.nextLine())) != 0) {
             client.productList(treeMap, j);
         }
         System.out.println("1,价格升序 2，价格降序 3，销量降序 4,购买商品 5,添加购物车 6,返回");
-        new ShopController(client, buffer).shopListChoose(scanner.nextInt());
+        new ShopController(client, buffer).shopListChoose(Integer.parseInt(scanner.nextLine()));
     }
 
     public void cartsView() {
@@ -67,11 +67,11 @@ public class ShopView {
         client.sendMsg("看购物车" + client.getUser().getId());
         client.readCarts(buffer);
         client.cartsList(1);
-        while ((j = scanner.nextInt()) != 0) {
+        while ((j = Integer.parseInt(scanner.nextLine())) != 0) {
             client.cartsList(j);
         }
         System.out.println("1,修改数量 2.移除商品 3.添加订单 4.返回");
-        new CartsController(client, buffer).cartsListChoose(scanner.nextInt());
+        new CartsController(client, buffer).cartsListChoose(Integer.parseInt(scanner.nextLine()));
     }
 
 
@@ -80,15 +80,15 @@ public class ShopView {
         int i;
         int j;
         System.out.println("输入商品id");
-        i = scanner.nextInt();
+        i = Integer.parseInt(scanner.nextLine());
         System.out.println("输入商品数量");
-        j = scanner.nextInt();
+        j = Integer.parseInt(scanner.nextLine());
         String addr = null;
         String telephone;
         String name;
         if (client.getUser().getAddr().size() > 0) {
             System.out.println("1,使用默认地址 2，新地址");
-            int choose = scanner.nextInt();
+            int choose = Integer.parseInt(scanner.nextLine());
             if (choose == 1) {
                 for (String s : client.getUser().getAddr().keySet()) {
                     addr = s;
@@ -96,17 +96,15 @@ public class ShopView {
                 }
                 telephone = client.getUser().getTelephone();
             } else {
-                scanner.nextLine();
                 System.out.println("请输入地址");
                 addr = scanner.nextLine();
                 System.out.println("输入手机号码");
                 telephone = scanner.nextLine();
             }
-            scanner.nextLine();
             System.out.println("输入收货人姓名");
             name = scanner.nextLine();
         } else {
-            scanner.nextLine();
+
             System.out.println("请输入地址");
             addr = scanner.nextLine();
             System.out.println("输入手机号码");
@@ -138,9 +136,9 @@ public class ShopView {
         int i;
         int j;
         System.out.println("输入商品id");
-        i = scanner.nextInt();
+        i = Integer.parseInt(scanner.nextLine());
         System.out.println("输入商品数量");
-        j = scanner.nextInt();
+        j = Integer.parseInt(scanner.nextLine());
         client.sendMsg("加购物车" + i + '~' + j + '@' + client.getUser().getId());
         System.out.println(client.readMsg(buffer));
         new ShopView(client, buffer).shopView();
@@ -153,12 +151,11 @@ public class ShopView {
         ObjectInputStream ois = null;
         ArrayList<Product> list = new ArrayList<>();
         System.out.println("1,名称查找 2，分类查找");
-        if ((choose = scanner.nextInt()) == 1) {
+        if ((choose = Integer.parseInt(scanner.nextLine())) == 1) {
             msg = "名称查找";
         } else {
             msg = "分类查找";
         }
-        scanner.nextLine();
         System.out.println("请输入具体信息");
         msg = msg + scanner.nextLine();
         client.sendMsg(msg);

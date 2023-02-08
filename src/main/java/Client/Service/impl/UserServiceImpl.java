@@ -75,9 +75,9 @@ public class UserServiceImpl implements UserService {
     public void addAfterSale() {
         System.out.println("======================");
         System.out.println("输入订单号");
-        int orderId = scanner.nextInt();
+        int orderId = Integer.parseInt(scanner.nextLine());
         System.out.println("请输入售后原因");
-        scanner.nextLine();
+
         String msg = scanner.nextLine();
         client.sendMsg("添加售后" + orderId + '~' + msg);
         System.out.println(client.readMsg(buffer));
@@ -120,13 +120,12 @@ public class UserServiceImpl implements UserService {
                 System.out.print(integer+"   ");
             }
             System.out.println("输入订单号");
-            int orderId = scanner.nextInt();
+            int orderId = Integer.parseInt(scanner.nextLine());
             System.out.println("输入分数");
             float point;
-            while (( point = scanner.nextFloat()) > 100 || point < 0){
+            while (( point = Float.parseFloat(scanner.nextLine())) > 10 || point < 0){
                 System.out.println("请输入0-10之间的数字");
             }
-            scanner.nextLine();
             System.out.println("请输入评价");
             String msg = scanner.nextLine();
             client.sendMsg("评价订单"+orderId+'~'+point+'@'+client.getUser().getId()+'!'+msg);

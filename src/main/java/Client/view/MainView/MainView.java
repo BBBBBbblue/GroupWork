@@ -20,7 +20,7 @@ public class MainView {
     }
     public  void mainView(){
         System.out.println("1，用户登录 2，用户注册 3，退出");
-        new MainController(client,buffer).mainChoose(scanner.nextInt());
+        new MainController(client,buffer).mainChoose(Integer.parseInt(scanner.nextLine()));
     }
 
 }

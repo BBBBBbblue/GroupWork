@@ -95,7 +95,7 @@ public class UserView {
 
     public void chargeView() {
         System.out.println("请输入你的充值金额！！！！");
-        int money = scanner.nextInt();
+        int money = Integer.parseInt(scanner.nextLine());
         client.sendMsg("用户充值"+client.getUser().getAccount() + "~" + money + ".00");
         String msg = client.readMsg(buffer);
         System.out.println(msg);
@@ -110,9 +110,8 @@ public class UserView {
         client.addrList();
         System.out.println("============================");
         System.out.println("请输入修改地址详情编号");
-        int id = scanner.nextInt();
+        int id = Integer.parseInt(scanner.nextLine());
         System.out.println("输入修改后详细地址");
-        scanner.nextLine();
         String newAddr = scanner.nextLine();
         client.sendMsg("修改地址"+id+"~"+newAddr);
         for (Iterator<Map.Entry<String, Integer>> iterator = client.getUser().getAddr().entrySet().iterator(); iterator.hasNext();) {

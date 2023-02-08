@@ -54,7 +54,7 @@ public class Client {
     }
 
     public void productList(TreeMap<Product,Integer> maps,int i){
-        System.out.print("====================================================================");
+        System.out.print("==============================================================");
         System.out.println();
         System.out.print("商品名称"+"\t");
         System.out.print("商品价格"+"\t");

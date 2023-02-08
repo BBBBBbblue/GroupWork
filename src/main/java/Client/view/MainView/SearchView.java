@@ -50,11 +50,11 @@ public class SearchView {
         }
         System.out.println();
         System.out.print("\t" + "页数" + i + "/" + (int)Math.ceil((float)list.size() / 3) + "\t" + "跳转到第__页" + "\t");
-        while ((j = scanner.nextInt()) != 0) {
+        while ((j = Integer.parseInt(scanner.nextLine())) != 0) {
             this.searchList(list, j);
         }
         System.out.println("1,购买商品 2,添加购物车 3,返回");
-        new SearchController(client, buffer).searchListChoose(scanner.nextInt());
+        new SearchController(client, buffer).searchListChoose(Integer.parseInt(scanner.nextLine()));
     }
 
     public void orderList(HashMap<Integer, ArrayList<OrderDetail>> list, int i) {
@@ -85,10 +85,10 @@ public class SearchView {
             }
         }
         System.out.print("\t" + "页数" + i + "/" + list.size() + "\t" + "跳转到第__页" + "\t");
-        while ((j = scanner.nextInt()) != 0) {
+        while ((j = Integer.parseInt(scanner.nextLine())) != 0) {
             this.orderList(list,j);
         }
         System.out.println("1,申请售后 2,评价订单 3,返回");
-        new FunctionController(client,buffer).otherChoose(scanner.nextInt());
+        new FunctionController(client,buffer).otherChoose(Integer.parseInt(scanner.nextLine()));
     }
 }
